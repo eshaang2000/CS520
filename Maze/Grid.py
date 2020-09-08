@@ -39,17 +39,41 @@ class Map:
         # get the adjacent indices
         # the possible movements are up, down, right, and left
         ans = []
-        right = (x+1,y)
-        left = (x-1, y)
-        up = (x, y+1)
-        down = (x, y-1)
+        right = (x,y+1)
+        left = (x, y-1)
+        up = (x-1, y)
+        down = (x+1, y)
 
         #now check if these coordinates are legal or not
         if self.legal(right[0], right[1]):
             print("Right is cool")
+        else:
+            print("Right is NOT cool")
+
+        if self.legal(left[0],left[1]):
+            print("Left is cool")
+        else:
+            print("Left is NOT cool")
+
+        if self.legal(up[0], up[1]):
+            print("Up is cool")
+        else:
+            print("Up is NOT cool")
+
+        if self.legal(down[0], down[1]):
+            print("Down is cool")
+        else:
+            print("Down is NOT cool")
+
+    def isBlocked(self,x,y):
+        #Checks if square is blocked
+        if self.map1[x][y] == 0:
+            print("Blocked")
+        if self.map1[x][y] == 1:
+            print("Not Blocked")
 
 
-        print("Eshaan")
+        
 
     def legal(self, x, y):
         if x>=0 and x<self.dim and y>=0 and y <self.dim:
@@ -65,9 +89,11 @@ class Map:
         # seen = set([start])
 
 
-m1 = Map(5)
-m1.populate(0.3)
-m1.getAdj(-2,0)
+m1 = Map(5) # dimensions
+m1.populate(0.3) # populTES Usind parameter prob
+m1.getAdj(1,0)
+m1.isBlocked(1,0) 
 m1.bfs()
+print(m1.map1[1][0])
 # print(m1.map1)
 # print(random.random())
