@@ -83,8 +83,8 @@ class Map:
             return False
 
     def trace(self, traceSet):
-        final = (self.dim-1, self.dim-1)
-        stack = []
+        final = (self.dim - 1, self.dim - 1)
+        stack = [final]
         back = traceSet[final]
 
         while back is not None:
@@ -103,36 +103,37 @@ class Map:
         # map1[0][0]=(2,3)
         # print(map1)
         # queue = [(0, 0)] # you start with
-        '''You start will the beginning
+        """You start will the beginning
         1. Get all the adjacents
         2. Check whats legal
         3. If legal check the set
-        4. If does not exist in set can add to the queue'''
-
+        4. If does not exist in set can add to the queue"""
 
         '''
         1. So we have a parent matrix
         2. This records the parent
         3. We have a dictionary of cell: parents'''
 
-        thisset = {(0,0)}
-        print("woah")
-        traceSet = {(0,0): None}
+        thisset = {(0, 0)}
+        # print("woah")
+        traceSet = {(0, 0): None}
         # print(traceSet.get((0,0)))
+        flag = False #variable to see if it is possible to reach the goal
         while queue:
             fringe = queue.pop(0)  ##gets 0, 0 first
             adjs = self.getAdj(fringe[0], fringe[1])
 
             if self.map1[fringe[0]][fringe[1]] == 2:
-                print("initial reached")
+                print("Our attempt has started")
 
             if self.map1[fringe[0]][fringe[1]] == 3:
                 print("Goal reached")
+                print("This is how you go about it")
                 ans = self.trace(traceSet)
                 self.printStack(ans)
+                flag = True
                 # print(ans.pop())
                 break
-
 
             if self.map1[fringe[0]][fringe[1]] == 0:
                 continue
@@ -148,9 +149,10 @@ class Map:
 
                     thisset.add(adjs[i])
                     # print(adjs[i])
-                    traceSet[adjs[i]]= fringe
+                    traceSet[adjs[i]] = fringe
                     queue.append(adjs[i])
-
+        if flag is False:
+            print("No way to goal")
         # print(traceSet)
 
 
