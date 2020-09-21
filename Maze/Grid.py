@@ -97,6 +97,14 @@ class Map:
         for i in range(len(stack)):
             print(stack.pop())
 
+    def savePath(self, stack):
+        path = []
+        for i in range(len(stack)):
+            x = stack.pop()
+            path.append(x)
+            print(x)
+        return path
+
     def addFire(self):
         dom = self.dim * self.dim
         prob = 1 / dom
@@ -155,7 +163,7 @@ class Map:
                 print("This is how you go about it")
                 print(traceSet)
                 ans = self.trace(traceSet, targetx, targety)
-                self.printStack(ans)
+                path = self.savePath(ans)
                 flag = True
                 # print(ans.pop())
                 break
@@ -177,16 +185,18 @@ class Map:
                     queue.append(adjs[i])
         if flag is False:
             print("No way to goal")
+            return []
         # print(traceSet)
+        return path
 
 
 m1 = Map(10)  # dimensions
 m1.populate(0.3)  # populTES Usind parameter prob
-m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1)
+BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1)
 m1.addFire()
 print(m1.map1)
-m1.bfs([(0,0)], 4, m1.firex, m1.firey)
-mat = np.random.random((100, 100))
+BFSpathFire = m1.bfs([(0,0)], 4, m1.firex, m1.firey)
+# mat = np.random.random((100, 100))
 # Creates PIL image
 
 # for x in range(0, m1.dim):
