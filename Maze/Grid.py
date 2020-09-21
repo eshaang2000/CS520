@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from PIL import Image
 
 class Map:
     def __init__(self, dim):  # will know the prob of each maze
@@ -161,7 +160,7 @@ class Map:
             if self.map1[fringe[0]][fringe[1]] == target:
                 print("Goal reached")
                 print("This is how you go about it")
-                print(traceSet)
+                # print(traceSet)
                 ans = self.trace(traceSet, targetx, targety)
                 path = self.savePath(ans)
                 flag = True
