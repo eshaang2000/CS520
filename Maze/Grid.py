@@ -153,7 +153,7 @@ class Map:
             if self.map1[fringe[0]][fringe[1]] == target:
                 print("Goal reached")
                 print("This is how you go about it")
-                print(traceSet)
+                # print(traceSet)
                 ans = self.trace(traceSet, targetx, targety)
                 self.printStack(ans)
                 flag = True
@@ -187,22 +187,3 @@ m1.addFire()
 print(m1.map1)
 m1.bfs([(0,0)], 4, m1.firex, m1.firey)
 mat = np.random.random((100, 100))
-# Creates PIL image
-
-# for x in range(0, m1.dim):
-#     for y in range(0, m1.dim):
-#         if m1.map1[x][y] == 2:
-#             m1.map1[x][y]=1
-#         if m1.map1[x][y] == 3:
-#             m1.map1[x][y]=1
-#         if m1.map1[x][y] == 1:
-#             m1.map1[x][y]=10
-#         if m1.map1[x][y] == 0:
-#             m1.map1[x][y]=1
-#         if m1.map1[x][y] == 10:
-#             m1.map1[x][y]=0
-                
-# print(m1.map1)
-# img = Image.fromarray(m1.map1, 'L')
-# img.show()
-
