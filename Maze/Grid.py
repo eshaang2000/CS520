@@ -1,6 +1,6 @@
 import numpy as np
 import random
-
+from PIL import Image
 
 class Map:
     def __init__(self, dim):  # will know the prob of each maze
@@ -82,8 +82,8 @@ class Map:
         else:
             return False
 
-    def trace(self, traceSet):
-        final = (self.dim - 1, self.dim - 1)
+    def trace(self, traceSet, x, y):
+        final = (x, y)
         stack = [final]
         back = traceSet[final]
 
@@ -97,7 +97,28 @@ class Map:
         for i in range(len(stack)):
             print(stack.pop())
 
-    def bfs(self, queue):
+    def addFire(self):
+        dom = self.dim * self.dim
+        prob = 1 / dom
+        flag = False
+        for x in range(0, self.dim):
+            for y in range(0, self.dim):
+                if self.map1[x][y] == 0 or self.map1[x][y] == 2 or self.map1[x][y] == 3:
+                    continue
+                if self.map1[x][y] == 1:
+                    if random.random() < prob:
+                        self.map1[x][y] = 4
+                        self.firex=x
+                        self.firey=y
+                        return
+                    else:
+                        dom -= 1
+                        prob = 1 / dom
+        # print(self.map1)
+        self.addFire()
+
+
+    def bfs(self, queue, target, targetx, targety):
 
         # map1 = np.zeros((self.dim, self.dim))
         # map1[0][0]=(2,3)
@@ -117,32 +138,35 @@ class Map:
         thisset = {(0, 0)}
         # print("woah")
         traceSet = {(0, 0): None}
+        # print("This is the trace set")
+        # print(traceSet)
+        # print(thisset)
         # print(traceSet.get((0,0)))
-        flag = False #variable to see if it is possible to reach the goal
+        flag = False  # variable to see if it is possible to reach the goal
         while queue:
-            fringe = queue.pop(0)  ##gets 0, 0 first
+            fringe = queue.pop(0)  # gets 0, 0 first
             adjs = self.getAdj(fringe[0], fringe[1])
 
             if self.map1[fringe[0]][fringe[1]] == 2:
                 print("Our attempt has started")
 
-            if self.map1[fringe[0]][fringe[1]] == 3:
+            if self.map1[fringe[0]][fringe[1]] == target:
                 print("Goal reached")
                 print("This is how you go about it")
-                ans = self.trace(traceSet)
+                print(traceSet)
+                ans = self.trace(traceSet, targetx, targety)
                 self.printStack(ans)
                 flag = True
                 # print(ans.pop())
                 break
 
-            if self.map1[fringe[0]][fringe[1]] == 0:
+            if self.map1[fringe[0]][fringe[1]] == 0 or self.map1[fringe[0]][fringe[1]] == 3:
                 continue
 
             # print("The adjacents")
             # print(adjs[0][0])
             # print(adjs)
             for i in range(len(adjs)):
-
                 if self.legal(adjs[i][0], adjs[i][1]):
                     if adjs[i] in thisset:
                         continue
@@ -156,13 +180,29 @@ class Map:
         # print(traceSet)
 
 
-
-m1 = Map(5)  # dimensions
+m1 = Map(10)  # dimensions
 m1.populate(0.3)  # populTES Usind parameter prob
-# m1.getAdj(1, 0)
-# m1.isBlocked(1,0)
-# print(m1.legal(-1, 0))
-m1.bfs([(0, 0)])
-# print(m1.map1[1][0])
+m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1)
+m1.addFire()
+print(m1.map1)
+m1.bfs([(0,0)], 4, m1.firex, m1.firey)
+mat = np.random.random((100, 100))
+# Creates PIL image
+
+# for x in range(0, m1.dim):
+#     for y in range(0, m1.dim):
+#         if m1.map1[x][y] == 2:
+#             m1.map1[x][y]=1
+#         if m1.map1[x][y] == 3:
+#             m1.map1[x][y]=1
+#         if m1.map1[x][y] == 1:
+#             m1.map1[x][y]=10
+#         if m1.map1[x][y] == 0:
+#             m1.map1[x][y]=1
+#         if m1.map1[x][y] == 10:
+#             m1.map1[x][y]=0
+                
 # print(m1.map1)
-# print(random.random())
+# img = Image.fromarray(m1.map1, 'L')
+# img.show()
+
