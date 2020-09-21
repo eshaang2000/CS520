@@ -166,6 +166,83 @@ class Map:
         # print(traceSet)
         return path
 
+    # Programming the Maze GUI
+    def createGUI(self, path):
+
+        # Define some colors
+        BLACK = (0, 0, 0)
+        WHITE = (255, 255, 255)
+        GREEN = (0, 255, 0)
+        RED = (255, 0, 0)
+        BLUE = (0, 0, 255)
+        YELLOW = (255, 255, 0)
+        ORANGE = (255, 100, 10)
+
+        # This sets the WIDTH and HEIGHT of each grid location
+        WIDTH = 20
+        HEIGHT = 20
+
+        # This sets the margin between each cell
+        MARGIN = 5
+
+        x = self.dim # Want the Maze GUI to have same dimensions as map object
+
+        #Create Maze 2-D Array
+        grid = []
+        for row in range(int(x)):
+            # Add an empty array that will hold each cell
+            # in this row
+            grid.append([])
+            for column in range(int(x)):
+                grid[row].append(0)  # Append a cell
+
+        # Initialize pygame
+        pygame.init()
+
+        # Set the HEIGHT and WIDTH of the screen
+        WINDOW_SIZE = [600, 400]
+        screen = pygame.display.set_mode(WINDOW_SIZE)
+
+        # Set title of screen
+        pygame.display.set_caption("Array Backed Grid")
+ 
+        # Loop until the user clicks the close button.
+        done = False
+ 
+        # Used to manage how fast the screen updates
+        clock = pygame.time.Clock()
+
+        # -------- Main Program Loop -----------
+        while not done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: # If user clicked close
+                    done = True # Flag that we are done so we exit the loop
+            # Set the screen background
+            screen.fill(GREEN)
+            # Draw the grid
+            for row in range(int(x)):
+                for column in range(int(x)):
+                    color = WHITE # white indicates free cell
+                    if self.map1[row][column] == 0:
+                        color = BLACK # black indicates occupied or blocked cell
+                    block = (row, column)
+                    if block in path:
+                        color = BLUE # blue indicates BFS path
+                    if self.map1[row][column] == 2:
+                        color = YELLOW # yellow indicates start
+                    if self.map1[row][column] == 3:
+                        color = ORANGE # orange indicates finish
+                    pygame.draw.rect(screen, color, [(MARGIN + WIDTH) * column + MARGIN, (MARGIN + HEIGHT) * row + MARGIN, WIDTH, HEIGHT])
+                    
+            # Limit to 60 frames per second
+            clock.tick(60)
+ 
+            # Update screen
+            pygame.display.flip()
+
+        pygame.quit()
+
+
 
 
 m1 = Map(10)  # dimensions
@@ -173,83 +250,4 @@ m1.populate(0.3)  # populTES Usind parameter prob
 BFSpath = m1.bfs([(0, 0)])
 # print(BFSpath)
 
-# Programming the Maze GUI
-
-# Define some colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-ORANGE = (255, 100, 10)
-# This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 20
-HEIGHT = 20
- 
-# This sets the margin between each cell
-MARGIN = 5
-
-x = m1.dim # want the Maze GUI to have same dimensions as Map Object
- 
-#Create Maze 2-D Array
-grid = []
-for row in range(int(x)):
-    # Add an empty array that will hold each cell
-    # in this row
-    grid.append([])
-    for column in range(int(x)):
-        grid[row].append(0)  # Append a cell
- 
-# Initialize pygame
-pygame.init()
-
- 
-# Set the HEIGHT and WIDTH of the screen
-WINDOW_SIZE = [600, 400]
-screen = pygame.display.set_mode(WINDOW_SIZE)
- 
-# Set title of screen
-pygame.display.set_caption("Array Backed Grid")
- 
-# Loop until the user clicks the close button.
-done = False
- 
-# Used to manage how fast the screen updates
-clock = pygame.time.Clock()
- 
-# -------- Main Program Loop -----------
-while not done:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # If user clicked close
-            done = True  # Flag that we are done so we exit this loop 
-    # Set the screen background
-    screen.fill(GREEN)
-    # Draw the grid
-    for row in range(int(x)):
-        for column in range(int(x)):
-            color = WHITE # white indicates free cell
-            if m1.map1[row][column] == 0:
-                color = BLACK # black indicates occupied cell
-            block = (row, column)
-            # print(block)
-            if block in BFSpath:
-                color = BLUE # blue indicates BFS path
-            if m1.map1[row][column] == 2:
-                color = YELLOW # yellow indicates start
-            if m1.map1[row][column] == 3:
-                color = ORANGE # orange indicates finish
-            pygame.draw.rect(screen,
-                             color,
-                             [(MARGIN + WIDTH) * column + MARGIN,
-                              (MARGIN + HEIGHT) * row + MARGIN,
-                              WIDTH,
-                              HEIGHT])
-    
-    # Limit to 60 frames per second
-    clock.tick(60)
- 
-    # Update screen
-    pygame.display.flip()
- 
-pygame.quit()
+m1.createGUI(BFSpath)
