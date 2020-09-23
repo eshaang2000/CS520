@@ -3,14 +3,14 @@ import random
 
 class Map:
     def __init__(self, dim):  # will know the prob of each maze
-        self.dim = dim
-        # self.p = p
-
-        # if p > 1 or p < 0:
-        #     raise ValueError("Probability must be between 0 and 1")
+        self.dim = dim        
         self.map1 = np.zeros((dim, dim))
 
-    def populate(self, p):
+    # populates map with 0s and 1s for blocked and free cells respectively. 2 indicates start and 3 indicates finish
+
+    def populate(self, p): 
+        if p > 1 or p < 0:
+            raise ValueError("Probability must be between 0 and 1")
         # print(self.map1)
         ones = 0
         zeroes = 0
@@ -47,26 +47,6 @@ class Map:
         ans.append(up)
         ans.append(down)
         return ans
-        # now check if these coordinates are legal or not
-        # if self.legal(right[0], right[1]):
-        #     print("Right is cool")
-        # else:
-        #     print("Right is NOT cool")
-        #
-        # if self.legal(left[0], left[1]):
-        #     print("Left is cool")
-        # else:
-        #     print("Left is NOT cool")
-        #
-        # if self.legal(up[0], up[1]):
-        #     print("Up is cool")
-        # else:
-        #     print("Up is NOT cool")
-        #
-        # if self.legal(down[0], down[1]):
-        #     print("Down is cool")
-        # else:
-        #     print("Down is NOT cool")
 
     def isBlocked(self, x, y):
         # Checks if square is blocked
@@ -76,6 +56,7 @@ class Map:
             print("Not Blocked")
 
     def legal(self, x, y):
+        # Checks if square is out of bounds of map
         if 0 <= x < self.dim and 0 <= y < self.dim:
             return True
         else:
@@ -96,13 +77,15 @@ class Map:
         for i in range(len(stack)):
             print(stack.pop())
 
-    def savePath(self, stack):
+    def savePath(self, stack): # also prints stack but saves the BFS path
         path = []
         for i in range(len(stack)):
             x = stack.pop()
             path.append(x)
             print(x)
         return path
+
+    # adds random fire to the map
 
     def addFire(self):
         dom = self.dim * self.dim
@@ -121,16 +104,77 @@ class Map:
                     else:
                         dom -= 1
                         prob = 1 / dom
-        # print(self.map1)
         self.addFire()
 
+    # gets a list of free squares on the map (squares with value of 1)
 
-    def bfs(self, queue, target, targetx, targety):
+    def getFreeSquares(self):
+        ans = []
+        for x in range(0, self.dim):
+            for y in range(0, self.dim):
+                if self.map1[x][y] == 1:
+                    cord = (x,y)
+                    ans.append(cord)
+        return ans
 
-        # map1 = np.zeros((self.dim, self.dim))
-        # map1[0][0]=(2,3)
-        # print(map1)
-        # queue = [(0, 0)] # you start with
+    # gets a list of squares on the map that are on fire (squares with value of 4)
+
+    def getSquaresOnFire(self):
+
+        ans = []
+        
+        for x in range(0, self.dim):
+            for y in range(0, self.dim):
+                if self.map1[x][y] == 4:
+                    cord = (x, y)
+                    ans.append(cord)
+        return ans
+
+    # gets a list of squares that will be set on fire in the next turn
+
+    def getFireSet(self, q, freeSquares):
+
+        freeSquares = self.getFreeSquares()
+        length = len(freeSquares)
+        fire_set = []
+        
+        for i in range(0, length):
+            adj = []
+            neighbors = []
+            burning_neighbors = 0
+            adj = self.getAdj(freeSquares[i][0], freeSquares[i][1])
+            adj_length = len(adj)
+            for j in range(0, adj_length):
+                if self.legal(adj[j][0], adj[j][1]):
+                    neighbors.append(adj[j])
+            neighbors_length = len(neighbors)
+            for k in range(0, neighbors_length):
+                x_cord = neighbors[k][0]
+                y_cord = neighbors[k][1]
+                if (self.map1[x_cord][y_cord] == 4):
+                    burning_neighbors += 1
+            power = pow(1 - q, burning_neighbors)
+            prob_on_fire = 1 - power
+            if (random.random() < prob_on_fire):
+                fire_set.append(freeSquares[i])
+                    
+        return fire_set
+
+    # spreads fire to squares in fire set (sets squares value to 4)
+
+    def spreadFire(self, fire_set):
+
+        length = len(fire_set)
+
+        for i in range(0, length):
+            x_cord = fire_set[i][0]
+            y_cord = fire_set[i][1]
+            self.map1[x_cord][y_cord] = 4
+
+
+
+    def bfs(self, queue, target, targetx, targety): # finds BFS path to the finish. if there is no path, will return nothing
+
         """You start will the beginning
         1. Get all the adjacents
         2. Check whats legal
@@ -143,12 +187,8 @@ class Map:
         3. We have a dictionary of cell: parents'''
 
         thisset = {(0, 0)}
-        # print("woah")
         traceSet = {(0, 0): None}
-        # print("This is the trace set")
-        # print(traceSet)
-        # print(thisset)
-        # print(traceSet.get((0,0)))
+        
         flag = False  # variable to see if it is possible to reach the goal
         while queue:
             fringe = queue.pop(0)  # gets 0, 0 first
@@ -170,29 +210,70 @@ class Map:
             if self.map1[fringe[0]][fringe[1]] == 0 or self.map1[fringe[0]][fringe[1]] == 3:
                 continue
 
-            # print("The adjacents")
-            # print(adjs[0][0])
-            # print(adjs)
+            
             for i in range(len(adjs)):
                 if self.legal(adjs[i][0], adjs[i][1]):
                     if adjs[i] in thisset:
                         continue
 
                     thisset.add(adjs[i])
-                    # print(adjs[i])
                     traceSet[adjs[i]] = fringe
                     queue.append(adjs[i])
         if flag is False:
             print("No way to goal")
             return []
-        # print(traceSet)
         return path
 
 
 m1 = Map(10)  # dimensions
+<<<<<<< HEAD
 m1.populate(0.3)  # populTES Usind parameter prob
 BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1) #This does print it
 m1.addFire()
 print(m1.map1)
 BFSpathFire = m1.bfs([(0,0)], 4, m1.firex, m1.firey)
+=======
+m1.populate(0.3)  # populates using parameter prob
+print("Path to Finish")
+BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1) # finds path to the finish. if there isn't one, it will say so
+m1.addFire() # adds random fire to free cell in map
+print("Map with random first fire placed")
+print(m1.map1)
+print("Path to Fire")
+BFSpathFire = m1.bfs([(0,0)], 4, m1.firex, m1.firey) # finds path to the fire, if there isn't one, it will say so
+
+freeSquares = m1.getFreeSquares() # gets free squares after fire has been placed
+fireSet = m1.getFireSet(1, freeSquares) # list of squares that will be set on fire after 1 turn
+print("Fire Set: ", fireSet)
+m1.spreadFire(fireSet) # spreads the fire
+print("New Map with Fire after 1 turn")
+print(m1.map1)
+freeSquares2 = m1.getFreeSquares() # gets free squares after fire has spread 1 turn
+fireSet2 = m1.getFireSet(1, freeSquares2) # list of squares that will be set on fire after 2 turns
+print("Fire Set 2: ", fireSet2)
+m1.spreadFire(fireSet2) # spreads the fire again
+print("New Map with Fire after 2 turns")
+print(m1.map1)
+
+
+# mat = np.random.random((100, 100))
+# Creates PIL image
+
+# for x in range(0, m1.dim):
+#     for y in range(0, m1.dim):
+#         if m1.map1[x][y] == 2:
+#             m1.map1[x][y]=1
+#         if m1.map1[x][y] == 3:
+#             m1.map1[x][y]=1
+#         if m1.map1[x][y] == 1:
+#             m1.map1[x][y]=10
+#         if m1.map1[x][y] == 0:
+#             m1.map1[x][y]=1
+#         if m1.map1[x][y] == 10:
+#             m1.map1[x][y]=0
+                
+# print(m1.map1)
+# img = Image.fromarray(m1.map1, 'L')
+# img.show()
+>>>>>>> 09f473a9365341a2ea89a2a697dac7971e1011ca
 
