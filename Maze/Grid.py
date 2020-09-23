@@ -124,6 +124,112 @@ class Map:
         # print(self.map1)
         self.addFire()
 
+    def getFreeSquares(self):
+        ans = []
+        for x in range(0, self.dim):
+            for y in range(0, self.dim):
+                if self.map1[x][y] == 1:
+                    cord = (x,y)
+                    ans.append(cord)
+        return ans
+
+    def getSquaresOnFire(self):
+
+        ans = []
+        
+        for x in range(0, self.dim):
+            for y in range(0, self.dim):
+                if self.map1[x][y] == 4:
+                    cord = (x, y)
+                    ans.append(cord)
+        return ans
+
+    def getFireSet(self, q, freeSquares):
+
+        freeSquares = self.getFreeSquares()
+        length = len(freeSquares)
+        fire_set = []
+        
+        for i in range(0, length):
+            adj = []
+            neighbors = []
+            burning_neighbors = 0
+            adj = self.getAdj(freeSquares[i][0], freeSquares[i][1])
+            adj_length = len(adj)
+            for j in range(0, adj_length):
+                if self.legal(adj[j][0], adj[j][1]):
+                    neighbors.append(adj[j])
+            neighbors_length = len(neighbors)
+            for k in range(0, neighbors_length):
+                x_cord = neighbors[k][0]
+                y_cord = neighbors[k][1]
+                if (self.map1[x_cord][y_cord] == 4):
+                    burning_neighbors += 1
+            power = pow(1 - q, burning_neighbors)
+            prob_on_fire = 1 - power
+            if (random.random() < prob_on_fire):
+                fire_set.append(freeSquares[i])
+                    
+        return fire_set
+
+    def spreadFire(self, fire_set):
+
+        length = len(fire_set)
+
+        for i in range(0, length):
+            x_cord = fire_set[i][0]
+            y_cord = fire_set[i][1]
+            self.map1[x_cord][y_cord] = 4
+
+            
+
+
+            
+
+
+
+        """
+
+        all_adj = []
+        neighbors = []
+        adj = []
+
+        length = len(freeSquares)
+        
+        for i in range(0, length):
+            adj = self.getAdj(freeSquares[i][0], freeSquares[i][1])
+            print(adj)
+            adj_length = len(adj)
+            for j in range(0, adj_length):
+                if self.legal(adj[j][0], adj[j][1]):
+                    x = (adj[j][0], adj[j][1])
+                    neighbors
+        
+
+        length = len(adj)
+
+        for i in range(0, length):
+            if self.legal(adj[i][0], adj[i][1]):
+                x = (adj[i][0], adj[i][1])
+                neighbors.append(x)
+
+        length = len(neighbors)
+
+        burning_neighbors = 0
+
+        
+
+        for i in range(0, length):
+            x_cord = neighbors[i][0]
+            y_cord = neighbors[i][1]
+            if (self.map1[x_cord][y_cord] == 2 or self.map1[x_cord][y_cord] == 3 or self.map1[x_cord][y_cord] == 0 or self.map1[x_cord][y_cord] == 1):
+                continue
+            if (self.map1[x_cord][y_cord] == 4):
+                burning_neighbors += 1
+            print(burning_neighbors)
+        """
+
+
 
     def bfs(self, queue, target, targetx, targety):
 
@@ -193,8 +299,18 @@ m1 = Map(10)  # dimensions
 m1.populate(0.3)  # populTES Usind parameter prob
 BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1)
 m1.addFire()
+print("Map with random first fire placed")
 print(m1.map1)
 BFSpathFire = m1.bfs([(0,0)], 4, m1.firex, m1.firey)
+
+freeSquares = m1.getFreeSquares()
+fireSet = m1.getFireSet(1, freeSquares)
+print("Fire Set: ", fireSet)
+m1.spreadFire(fireSet)
+print("New Map with Fire after 1 turn")
+print(m1.map1)
+
+
 # mat = np.random.random((100, 100))
 # Creates PIL image
 
