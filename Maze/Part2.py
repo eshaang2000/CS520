@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from PIL import Image
 
 class Map:
     def __init__(self, dim):  # will know the prob of each maze
@@ -183,7 +182,3 @@ class Map:
 m1 = Map(10)  # dimensions
 m1.populate(0.3)  # populTES Usind parameter prob
 m1.bfs([(0, 0)], 3, m1.dim-1, m1.dim-1)
-m1.addFire()
-print(m1.map1)
-m1.bfs([(0,0)], 4, m1.firex, m1.firey)
-mat = np.random.random((100, 100))
