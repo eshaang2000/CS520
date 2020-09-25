@@ -227,10 +227,11 @@ class Map:
 
 
 m1 = Map(100)  # dimensions
-m1.populate(0.2)  # populates using parameter prob
+m1.populate(0.4)  # populates using parameter prob
 print("Path to Finish")
 BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
                        m1.dim - 1)  # finds path to the finish. if there isn't one, it will say so
+
 print(BFSpathTarget)
 m1.addFire()  # adds random fire to free cell in map
 print("Map with random first fire placed")
@@ -259,11 +260,17 @@ for i in range(len(BFSpathTarget)):
 print(len(fireList))
 print(len(BFSpathTarget))
 
-
+flag1=False
 for i in range(len(fireList)):
     if BFSpathTarget[i] in fireList[i]:
         print("Fire Fire Fire Fire Fire")
+        print("The person burns at"+str(i))
+        flag1=True
         break
+
+if not flag1:
+    print("He made it through")
+
 # print("New Map with Fire after 1 turn")
 # # print(m1.map1)
 # freeSquares2 = m1.getFreeSquares()  # gets free squares after fire has spread 1 turn
