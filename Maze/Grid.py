@@ -1,7 +1,5 @@
 import numpy as np
 import random
-from PIL import Image
-
 class Map:
     def __init__(self, dim):  # will know the prob of each maze
         self.dim = dim
