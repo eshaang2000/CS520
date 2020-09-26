@@ -209,7 +209,7 @@ class Map:
                 # print(ans.pop())
                 break
 
-            if self.map1[fringe[0]][fringe[1]] == 0 or self.map1[fringe[0]][fringe[1]] == 3:
+            if self.map1[fringe[0]][fringe[1]] == 0 or self.map1[fringe[0]][fringe[1]] == 3 or self.map1[fringe[0]][fringe[1]] == 4:
                 continue
 
             for i in range(len(adjs)):
@@ -228,6 +228,7 @@ class Map:
 
 m1 = Map(10)  # dimensions
 m1.populate(0.3)  # populates using parameter prob
+
 print("Path to Finish")
 BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
                        m1.dim - 1)  # finds path to the finish. if there isn't one, it will say so
@@ -252,9 +253,18 @@ for i in range(len(BFSpathTarget)):
     fireList.append(fireSet1)
     freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
     fireSet = m1.getFireSet(0, freeSquares)  # list of squares that will be set on fire after 1 turn
-    # print("Fire Set: ", fireSet)
     m1.spreadFire(fireSet)  # spreads the fire
 
+
+'''
+1. Base case: no path or goal
+2. Everytime fire spread - recompute path
+3. return final path
+'''
+
+""" 
+Eshaan: Testing part 1 and analyzing?
+Siddo: A* and bfs """
 
 
 print(len(fireList))
