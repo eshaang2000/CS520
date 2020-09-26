@@ -107,6 +107,17 @@ class Map:
                         prob = 1 / dom
         self.addFire()
 
+    # gets a list of blocked squares on the map (squares with value of 0)
+
+    def getBlockedSquares(self):
+        ans = []
+        for x in range(0, self.dim):
+            for y in range(0, self.dim):
+                if self.map1[x][y] == 0:
+                    cord = (x, y)
+                    ans.append(cord)
+        return ans
+
     # gets a list of free squares on the map (squares with value of 1)
 
     def getFreeSquares(self):
@@ -225,19 +236,42 @@ class Map:
             return []
         return path
 
+    def thinMaze(self, p): # method to thin maze, will remove a fraction p of the maze's obstacles at random
+        blockedSquares = self.getBlockedSquares()
+        size = len(blockedSquares)
+        numberOfBlocksToChange = round(p*size)
+        change_list = random.sample(blockedSquares, numberOfBlocksToChange)
+        for i in range(len(change_list)):
+            x_cord = change_list[i][0]
+            y_cord = change_list[i][1]
+            self.map1[x_cord][y_cord] = 1
 
-m1 = Map(100)  # dimensions
-m1.populate(0.4)  # populates using parameter prob
+
+
+
+m1 = Map(10)  # dimensions
+m1.populate(0.3)  # populates using parameter prob
 print("Path to Finish")
 BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
                        m1.dim - 1)  # finds path to the finish. if there isn't one, it will say so
 
 print(BFSpathTarget)
+
+m1.thinMaze(0.3)
+
+print(m1.map1)
+BFSpathTarget = m1.bfs([(0,0)], 3, m1.dim - 1, m1.dim - 1)
+print(BFSpathTarget)
+
+"""
+
 m1.addFire()  # adds random fire to free cell in map
 print("Map with random first fire placed")
 print(m1.map1)
+
 print("Path to Fire")
 BFSpathFire = m1.bfs([(0, 0)], 4, m1.firex, m1.firey)  # finds path to the fire, if there isn't one, it will say so
+print(BFSpathFire)
 
 
 
@@ -251,22 +285,29 @@ for i in range(len(BFSpathTarget)):
     fireSet1 = m1.getSquaresOnFire()
     fireList.append(fireSet1)
     freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
-    fireSet = m1.getFireSet(1, freeSquares)  # list of squares that will be set on fire after 1 turn
+    fireSet = m1.getFireSet(0.5, freeSquares)  # list of squares that will be set on fire after 1 turn
     # print("Fire Set: ", fireSet)
     m1.spreadFire(fireSet)  # spreads the fire
 
 
 
-print(len(fireList))
-print(len(BFSpathTarget))
+# print(len(fireList))
+# print(len(BFSpathTarget))
 
 flag1=False
 for i in range(len(fireList)):
     if BFSpathTarget[i] in fireList[i]:
         print("Fire Fire Fire Fire Fire")
-        print("The person burns at"+str(i))
+        print("The person burns at "+str(i))
         flag1=True
         break
 
 if not flag1:
-    print("He made it through")
+    if not BFSpathTarget:
+        print("Can't make it to the end regardless of fire")
+    else:
+        print("He made it through")
+
+"""
+
+    
