@@ -187,9 +187,11 @@ class Map:
         1. So we have a parent matrix
         2. This records the parent
         3. We have a dictionary of cell: parents'''
+        if self.map1[queue[0][0]][queue[0][1]] == target:
+            return [1]
 
-        thisset = {(0, 0)}
-        traceSet = {(0, 0): None}
+        thisset = {queue[0]}
+        traceSet = {queue[0]: None}
 
         flag = False  # variable to see if it is possible to reach the goal
         while queue:
@@ -225,87 +227,93 @@ class Map:
             return []
         return path
 
+def test():
+    m1 = Map(10)  # dimensions
+    m1.populate(0.3)  # populates using parameter prob
 
-m1 = Map(10)  # dimensions
-m1.populate(0.3)  # populates using parameter prob
-
-print("Path to Finish")
-BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
-                       m1.dim - 1)  # finds path to the finish. if there isn't one, it will say so
-
-print(BFSpathTarget)
-m1.addFire()  # adds random fire to free cell in map
-print("Map with random first fire placed")
-print(m1.map1)
-print("Path to Fire")
-BFSpathFire = m1.bfs([(0, 0)], 4, m1.firex, m1.firey)  # finds path to the fire, if there isn't one, it will say so
-
-
-
-#Assuming there is a path to the fire now what do we do
-
-
+    print("Path to Finish")
+    BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
+                        m1.dim - 1)  # finds path to the finish. if there isn't one, it will say so
+    if BFSpathTarget == []:
+        return 0
+    print(BFSpathTarget)
+    m1.addFire()  # adds random fire to free cell in map
+    print("Map with random first fire placed")
+    print(m1.map1)
+    print("Path to Fire")
+    BFSpathFire = m1.bfs([(0, 0)], 4, m1.firex, m1.firey)  # finds path to the fire, if there isn't one, it will say so
+    print(BFSpathFire)
+    if BFSpathFire == []:
+        return 0
 
 
-fireList = []
-for i in range(len(BFSpathTarget)):
-    fireSet1 = m1.getSquaresOnFire()
-    fireList.append(fireSet1)
-    freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
-    fireSet = m1.getFireSet(0, freeSquares)  # list of squares that will be set on fire after 1 turn
-    m1.spreadFire(fireSet)  # spreads the fire
+    #Assuming there is a path to the fire now what do we do
+
+    
 
 
-'''
-1. Base case: no path or goal
-2. Everytime fire spread - recompute path
-3. return final path
-'''
 
-""" 
-Eshaan: Testing part 1 and analyzing?
-Siddo: A* and bfs """
+    fireList = []
+    # for i in range(len(BFSpathTarget)):
+    #     fireSet1 = m1.getSquaresOnFire()
+    #     # fireList.append(fireSet1)
+    #     freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
+    #     fireSet = m1.getFireSet(0, freeSquares)  # list of squares that will be set on fire after 1 turn
+    #     m1.spreadFire(fireSet)  # spreads the fire
+    fireList=[(0,0), BFSpathTarget[1]]
+    while BFSpathFire!= [] or BFSpathFire[0] == (m1.dim-1, m1.dim-1):
 
 
-print(len(fireList))
-print(len(BFSpathTarget))
+        freeSquares = m1.getFreeSquares()
+        fireSet = m1.getFireSet(.2, freeSquares)
+        m1.spreadFire(fireSet)
+        if BFSpathTarget == []:
+            return -1
+        if len(BFSpathTarget) == 1:
+            break
+        BFSpathTarget = m1.bfs([BFSpathTarget[1]], 3, m1.dim - 1, m1.dim - 1)
+        if BFSpathTarget == []:
+            return -1
+        if len(BFSpathTarget) == 1:
+            break
+        fireList.append(BFSpathTarget[1])
+        print(BFSpathTarget[1])
+        print("poop")
+        print(BFSpathTarget)
+    
+    print(fireList)
+    # print(BFSpathTarget)
+    # freeSquares = m1.getFreeSquares()
+    # fireSet = m1.getFireSet(1, freeSquares)
+    # m1.spreadFire(fireSet)
+    # BFSpathTarget = m1.bfs([BFSpathTarget[1]], 3, m1.dim - 1, m1.dim - 1)
+    # print(BFSpathTarget[1])
+    # print("poop")
+    # print(BFSpathTarget)
+    '''
+    1. Base case: no path or goal
+    2. Everytime fire spread - recompute path
+    3. return final path
+    '''
 
-flag1=False
-for i in range(len(fireList)):
-    if BFSpathTarget[i] in fireList[i]:
-        print("Fire Fire Fire Fire Fire")
-        print("The person burns at"+str(BFSpathTarget[i]))
-        flag1=True
-        break
+    """ 
+    Eshaan: Testing part 1 and analyzing?
+    Siddo: A* and bfs """
 
-if not flag1:
-    print("He made it through")
 
-# print("New Map with Fire after 1 turn")
-# # print(m1.map1)
-# freeSquares2 = m1.getFreeSquares()  # gets free squares after fire has spread 1 turn
-# fireSet2 = m1.getFireSet(1, freeSquares2)  # list of squares that will be set on fire after 2 turns
-# print("Fire Set 2: ", fireSet2)
-# m1.spreadFire(fireSet2)  # spreads the fire again
-# print("New Map with Fire after 2 turns")
-# print(m1.map1)
 
-# mat = np.random.random((100, 100))
-# Creates PIL image
+    # print(len(fireList))
+    # print(len(BFSpathTarget))
 
-# for x in range(0, m1.dim):
-#     for y in range(0, m1.dim):
-#         if m1.map1[x][y] == 2:
-#             m1.map1[x][y]=1
-#         if m1.map1[x][y] == 3:
-#             m1.map1[x][y]=1
-#         if m1.map1[x][y] == 1:
-#             m1.map1[x][y]=10
-#         if m1.map1[x][y] == 0:
-#             m1.map1[x][y]=1
-#         if m1.map1[x][y] == 10:
-#             m1.map1[x][y]=0
+    # flag1=False
+    # for i in range(len(fireList)):
+    #     if BFSpathTarget[i] in fireList[i]:
+    #         print("Fire Fire Fire Fire Fire")
+    #         print("The person burns at"+str(BFSpathTarget[i]))
+    #         flag1=True
+    #         break
 
-# print(m1.map1)
-# img = Image.fromarray(m1.map1, 'L')
-# img.show()
+    # if not flag1:
+    #     print("He made it through")
+
+print(test())
