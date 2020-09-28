@@ -268,11 +268,13 @@ def test():
         fireSet = m1.getFireSet(.2, freeSquares)
         m1.spreadFire(fireSet)
         if BFSpathTarget == []:
+            print(m1.map1)
             return -1
         if len(BFSpathTarget) == 1:
             break
         BFSpathTarget = m1.bfs([BFSpathTarget[1]], 3, m1.dim - 1, m1.dim - 1)
         if BFSpathTarget == []:
+            print(m1.map1)
             return -1
         if len(BFSpathTarget) == 1:
             break
@@ -282,6 +284,7 @@ def test():
         print(BFSpathTarget)
     
     print(fireList)
+    return 10
     # print(BFSpathTarget)
     # freeSquares = m1.getFreeSquares()
     # fireSet = m1.getFireSet(1, freeSquares)
