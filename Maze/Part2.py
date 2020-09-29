@@ -1,6 +1,6 @@
 import numpy as np
 import random
-
+from Node import Node
 
 class Map:
     def __init__(self, dim):  # will know the prob of each maze
@@ -58,10 +58,55 @@ class Map:
 
     def legal(self, x, y):
         # Checks if square is out of bounds of map
+        
         if 0 <= x < self.dim and 0 <= y < self.dim:
             return True
         else:
             return False
+
+    # get valid successors of a cell (valid unblocked cells)
+
+    def getSuccessors(self, x, y):
+        adj = []
+
+        adj = self.getAdj(x, y) # get all adjacents
+
+        # check if they are valid, if they are, retrieve them
+
+        length = len(adj)
+
+        valid = []
+
+        for i in range(length):
+            x_cord = adj[i][0]
+            y_cord = adj[i][1]
+            if self.legal(x_cord, y_cord):
+                valid.append(adj[i])
+                
+            else:
+                continue
+
+
+        free = []
+        
+
+        # check if they are unblocked, if they are, retreive them
+
+        length = len(valid)
+
+        for i in range(length):
+            x_cord = valid[i][0]
+            y_cord = valid[i][1]
+            if self.map1[x_cord][y_cord] == 0:
+                continue
+            else:
+                free.append(valid[i])  
+
+        return free
+
+        
+        
+
 
     def trace(self, traceSet, x, y):
         final = (x, y)
@@ -246,10 +291,96 @@ class Map:
             y_cord = change_list[i][1]
             self.map1[x_cord][y_cord] = 1
 
+    def getHeuristic(self, curr_x, curr_y, goal_x, goal_y):
+        h = abs(curr_x - goal_x) + abs(curr_y - goal_y)
+        return h
+
+
+    def aStar(self, start, finish):
+
+        open_list = [] # list of open nodes to explore
+        closed_list = [] # list of closed nodes
+
+        path = [] # path to return once we find goal
+
+        # add start node
+        start_node = Node(None, start)
+
+        goal_x = finish[0]
+        goal_y = finish[1]
+
+        open_list.append(start_node)
+
+        # while open list is not empty
+        while len(open_list) != 0:
+
+            index = 0
+            q = open_list[0]
+            smallestF = open_list[0].f
+            
+            # get node with smallest f
+            for i in range(len(open_list)):
+                if open_list[i].f < smallestF:
+                    q = open_list[i]
+                    index = i                    
+                    smallestF = open_list[i].f
+            
+            q = open_list.pop(index) # pop smallest f node off list to explore
+            closed_list.append(q) # add that node to closed list
+
+            q_x_cord = q.position[0]
+            q_y_cord = q.position[1]
+
+            if q_x_cord == goal_x and q_y_cord == goal_y: # if node is goal node, we are done. get path
+                ptr_node = q
+                path.append(ptr_node.position)
+                while ptr_node is not None:
+                    path.append(ptr_node.position)
+                    ptr_node = ptr_node.parent
+                path.reverse()
+                return path
+
+
+            
+
+            successors = self.getSuccessors(q_x_cord, q_y_cord) # get valid, unblocked successors
+
+            for i in range(len(successors)):
+                s = successors[i]
+                new_x_cord = s[0]
+                new_y_cord = s[1]
+                curr_node = Node(q, (new_x_cord, new_y_cord))
+
+                if curr_node in closed_list: # if already in closed list, move on to next successor
+                    continue
+
+                curr_node.g = q.g + 1
+                curr_node.h = self.getHeuristic(new_x_cord, new_y_cord, goal_x, goal_x)
+                curr_node.f = curr_node.g + curr_node.h
+
+                for j in range(len(open_list)):
+                    if curr_node.position == open_list[j].position: # if successor already in open list
+                        if curr_node.g > open_list[j].g: # if successor has higher g than one in open list
+                            continue
+
+                open_list.append(curr_node)
+
+                    
 
 
 
-m1 = Map(10)  # dimensions
+                
+
+
+
+
+
+    
+
+
+
+
+m1 = Map(5)  # dimensions
 m1.populate(0.3)  # populates using parameter prob
 print("Path to Finish")
 BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
@@ -258,20 +389,29 @@ BFSpathTarget = m1.bfs([(0, 0)], 3, m1.dim - 1,
 print(BFSpathTarget)
 
 m1.thinMaze(0.3)
-
+print("thinned maze")
 print(m1.map1)
-BFSpathTarget = m1.bfs([(0,0)], 3, m1.dim - 1, m1.dim - 1)
-print(BFSpathTarget)
+
+aStarPath = m1.aStar((0, 0), (m1.dim - 1, m1.dim - 1))
+print("this is a star path for thinned maze")
+print(aStarPath)
+
+
+
+
+
+
+
+
+
+
 
 """
-
 m1.addFire()  # adds random fire to free cell in map
 print("Map with random first fire placed")
 print(m1.map1)
-
 print("Path to Fire")
 BFSpathFire = m1.bfs([(0, 0)], 4, m1.firex, m1.firey)  # finds path to the fire, if there isn't one, it will say so
-print(BFSpathFire)
 
 
 
@@ -285,28 +425,25 @@ for i in range(len(BFSpathTarget)):
     fireSet1 = m1.getSquaresOnFire()
     fireList.append(fireSet1)
     freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
-    fireSet = m1.getFireSet(0.5, freeSquares)  # list of squares that will be set on fire after 1 turn
+    fireSet = m1.getFireSet(1, freeSquares)  # list of squares that will be set on fire after 1 turn
     # print("Fire Set: ", fireSet)
     m1.spreadFire(fireSet)  # spreads the fire
 
 
 
-# print(len(fireList))
-# print(len(BFSpathTarget))
+print(len(fireList))
+print(len(BFSpathTarget))
 
 flag1=False
 for i in range(len(fireList)):
     if BFSpathTarget[i] in fireList[i]:
         print("Fire Fire Fire Fire Fire")
-        print("The person burns at "+str(i))
+        print("The person burns at"+str(i))
         flag1=True
         break
 
 if not flag1:
-    if not BFSpathTarget:
-        print("Can't make it to the end regardless of fire")
-    else:
-        print("He made it through")
+    print("He made it through")
 
 """
 
