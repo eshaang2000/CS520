@@ -9,7 +9,7 @@ print(su)
 for j in range(11):
     s=0
     b=0
-    while((s+b) != 1000):
+    while((s+b) != 100):
         ans = Grid.test(float(j)/10)
         if ans == 1:
             s+=1

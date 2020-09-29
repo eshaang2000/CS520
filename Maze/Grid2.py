@@ -227,7 +227,7 @@ class Map:
             return []
         return path
 
-def test():
+def test(qu):
     m1 = Map(10)  # dimensions
     m1.populate(0.3)  # populates using parameter prob
 
@@ -260,12 +260,13 @@ def test():
     #     freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
     #     fireSet = m1.getFireSet(0, freeSquares)  # list of squares that will be set on fire after 1 turn
     #     m1.spreadFire(fireSet)  # spreads the fire
+    # BFSpathTarget = m1.bfs([(0,0)], 3, m1.dim - 1, m1.dim - 1)
     fireList=[(0,0), BFSpathTarget[1]]
     while BFSpathFire!= [] or BFSpathFire[0] == (m1.dim-1, m1.dim-1):
 
 
         freeSquares = m1.getFreeSquares()
-        fireSet = m1.getFireSet(.2, freeSquares)
+        fireSet = m1.getFireSet(qu, freeSquares)
         m1.spreadFire(fireSet)
         if BFSpathTarget == []:
             print(m1.map1)
@@ -319,4 +320,4 @@ def test():
     # if not flag1:
     #     print("He made it through")
 
-print(test())
+print(test(0))
