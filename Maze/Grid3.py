@@ -264,7 +264,7 @@ def sim(length, m1, qu, start):
     3. This function returns that BFS Path
     """
     msim = copy.deepcopy(m1)
-    for i in range(8): #int(math.floor(float(length))/5)
+    for i in range(10): #int(math.floor(float(length))/5)
         # fireSet1 = m1.getSquaresOnFire()
         # fireList.append(fireSet1)
         freeSquares = msim.getFreeSquares()  # gets free squares after fire has been placed
@@ -275,7 +275,7 @@ def sim(length, m1, qu, start):
     print("here")
     print(start)
     BFSpathTarget2 = msim.bfs([start], 3, m1.dim - 1, m1.dim - 1)
-    return BFSpathTarget2[0:8]
+    return BFSpathTarget2[0:10]
 
 
 def test(qu):
@@ -325,6 +325,38 @@ def test(qu):
 
         if BFSpathTarget2 == []:
             print("You're doomed")
+            BFSpathTarget3 = m1.bfs([s], 3, m1.dim-1, m1.dim-1)
+            if BFSpathTarget3 == []:
+                print("unlucky")
+                return 0
+            fireList = []
+            for i in range(len(BFSpathTarget3)):
+                fireSet1 = m1.getSquaresOnFire()
+                fireList.append(fireSet1)
+                freeSquares = m1.getFreeSquares()  # gets free squares after fire has been placed
+                fireSet = m1.getFireSet(qu, freeSquares)  # list of squares that will be set on fire after 1 turn
+                # print("Fire Set: ", fireSet)
+                m1.spreadFire(fireSet)  # spreads the fire
+            print(len(fireList))
+            print(len(BFSpathTarget3))
+            # print(fireList)
+            flag1=False
+            for i in range(len(fireList)):
+                if BFSpathTarget3[i] in fireList[i]:
+                    print("Fire Fire Fire Fire Fire")
+                    print("The person burns at"+str(BFSpathTarget3[i]))
+                    flag1=True
+                    return 0
+
+            if not flag1:
+                print("He made it through")
+                if BFSpathTarget3 == []:
+                    return -1
+                s = BFSpathTarget3[i]
+                return 1
+            print("OK")
+
+
             return 0
         s=BFSpathTarget2[len(BFSpathTarget2)-1]
         if BFSpathTarget2 != []:
@@ -475,4 +507,4 @@ def test(qu):
     # if not flag1:
     #     print("He made it through")
     #     return 1
-print(test(0.2))
+print(test(0))
