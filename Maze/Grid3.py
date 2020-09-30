@@ -301,7 +301,7 @@ def test(qu):
     """ 
     1. All the bottle necks are past
     2. Simulate the fire and see if there is a path """
-
+    save = [(0,0)]
 
     # fireList = []
     # for i in range(int(math.floor(float(len(BFSpathTarget)))/5)):
@@ -326,6 +326,7 @@ def test(qu):
         if BFSpathTarget2 == []:
             print("You're doomed")
             BFSpathTarget3 = m1.bfs([s], 3, m1.dim-1, m1.dim-1)
+            save.append(BFSpathTarget3)
             if BFSpathTarget3 == []:
                 print("unlucky")
                 return 0
@@ -350,8 +351,7 @@ def test(qu):
 
             if not flag1:
                 print("He made it through")
-                if BFSpathTarget3 == []:
-                    return -1
+                save.append(BFSpathTarget3)
                 s = BFSpathTarget3[i]
                 return 1
             print("OK")
