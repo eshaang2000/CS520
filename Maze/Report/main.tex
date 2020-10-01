@@ -34,31 +34,50 @@
 
 \maketitle % Print the title
 
-%----------------------------------------------------------------------------------------
-%	FIGURE EXAMPLE
-%----------------------------------------------------------------------------------------
-\comment{
-\section{Image Interpretation}
-
-\begin{figure}[h] % [h] forces the figure to be output where it is defined in the code (it suppresses floating)
-	\centering
-	\includegraphics[width=0.5\columnwidth]{swallow.jpg} % Example image
-	\caption{European swallow.}
-\end{figure}
-
-%------------------------------------------------
-}%commented out
-
 \section{The maze is on fire}
 
 \subsection{Testing out our environment}
 What I mean by testing out our environment is that we wanted to demonstrate the maze being generated with a given block density $\rho$. We also wanted to demonstrate the placement of fire and initial path to the target.\\
 
 So we first generated a few maps with varying levels of block-density as demonstrated by the graphics below. \\
-
+\begin{figure}[H]
+ 	\begin{center}
+ 	\includegraphics*[scale=0.3]{GUI3C.png}
+	\caption{The map that is generated for p=0.3}
+	\label{fig:example}
+	
+ 	\end{center}
+ 
+ \end{figure}
+	\begin{figure}[H]
+ 	\begin{center}
+	\includegraphics*[scale=0.3]{GUI4C.png}
+	\caption{The map that is generated for p=0.6}
+	\label{fig:example}
+	\vspace{2em}
+	\includegraphics*[scale=0.3]{GUI5C.png}
+	\caption{The map that is generated for p=0.9}
+	\label{fig:example}
+	\end{center}
+	\end{figure}
 %Add image of the empty mazes
+\pagebreak
+Next we would like to confirm that one element at random gets set on fire and spreads as demonstrated by the graphics below. \\
 
-Next we would like to confirm that one element at random gets set on fire as demonstrated by the graphics below. \\
+\begin{figure}[H]
+ 	\begin{center}
+ 	\includegraphics*[scale=0.3]{GUI6C.png}
+	\caption{The map fire being placed}
+	\label{fig:example}
+	\vspace{2em}
+	\includegraphics*[scale=0.3]{GUI7C.png}
+	\caption{The fire spreading after a few turns}
+	\label{fig:example}
+	
+ 	\end{center}
+  	
+	
+ \end{figure}
 
 %add image of fire and fire spreadying for flammability q
 
@@ -176,8 +195,20 @@ As we mentioned the time complexities of all three methods, this becomes very co
 \section{Maze Thinning}
 
 \subsection{Testing out our environment}
-In the maze thinning part of the project, we are still using the same maze environment as the one in the previous part. We still generate a maze with a given block density of $p$, however this time, there is no fire. While we used Breadth-First Search (BFS) in the previous part, in this part we aim to use the A* search algorithm to find a way through the maze. The benefits to A* is that if we choose a consistent heuristic, we can find the most optimal path (if there is one) through the maze while also expanding fewer nodes through our search than BFS.
-
+In the maze thinning part of the project, we are still using the same maze environment as the one in the previous part. We still generate a maze with a given block density of $p$, however this time, there is no fire. While we used Breadth-First Search (BFS) in the previous part, in this part we aim to use the A* search algorithm to find a way through the maze. The benefits to A* is that if we choose a consistent heuristic, we can find the most optimal path (if there is one) through the maze while also expanding fewer nodes through our search than BFS.\vspace{2em}\\
+We want to demonstrate out thinning maze function works and hence we generated these images. 
+\begin{figure}[H]
+ 	\centering
+  	\includegraphics*[scale=0.3]{Maze.png}
+	\caption{Maze before thinning}
+	\label{fig:example}
+ \end{figure}
+ \begin{figure}[H]
+ 	\centering
+  	\includegraphics*[scale=0.3]{MazeThinned.png}
+	\caption{Maze after thinning}
+	\label{fig:example}
+ \end{figure}
 \subsection{Strategy 1 - A* Manhattan}
 
 There are several means of generating heuristics. Our first strategy generates heuristics using Manhattan Distance, which estimates the distance a node is from the goal by adding up its vertical and horizontal distance, or some would call it - the Manhattan Distance (w/o Broadway).\vspace{2em}\\
@@ -210,6 +241,7 @@ For the maze problem, we decided to use the "superpower" of moving diagonally wi
 
 \subsection{Comparison}
 For each strategy, we kept the obstacle density the same at $p = 0.3$. We then ran and solved 1000 mazes each strategy, for each $\rho$ that would be used to thin the maze. We also generated 10 by 10 mazes to test each strategy as this was the largest sized maze that we could run repeatedly for such a large amount of mazes and finish in a reasonable time. We also did not count any mazes were there is no path to the goal. We recorded our findings in the table above.
+\begin{center}
 
 \begin{table}[H]
 \begin{tabular}{|l|l|l|l|l|}
@@ -238,6 +270,7 @@ For each strategy, we kept the obstacle density the same at $p = 0.3$. We then r
 	\label{fig:example}
  \end{figure}
 
+\end{center}
 Strategy 1 just consists of doing A*-Manhattan over the original maze. No thinning is involved, so $\rho$'s value is irrelevant to Strategy 1. Nonetheless, we see that Strategy 1 on average expands 53.8 percent of the total nodes in the maze when finding the optimal solution.
 
 \vspace{1em}
@@ -252,5 +285,6 @@ However, around $\rho = 0.5$, we can see from the table and graph that as $\rho$
 \vspace{1em}
 
 Looking at Strategy 3, we see that it performs worse than both Strategy 1 and Strategy 2 when it comes to lookups, with an average of 57.5 percent of nodes explored. After observing this, we believe that the reason it performs worse than the other 2 strategies because it is not a consistent heuristic like the other 2 strategies. The reason being, we are allowing our BFS to also search diagonal neighbors, which gives us a lower bound of moves. However, it does not work as well in the actual maze where we are not allowed to move diagonal, but only in cardinal directions. We learned from this that when you are only allowed to move in specific directions, expanding the directions you can move in to determine your heuristics may give a lower bound of moves, but it does not correlate well to actual execution. Thus, we concluded that Strategy 3 is not a viable option compared to the other 2 strategies.
+
 
 \end{document}
