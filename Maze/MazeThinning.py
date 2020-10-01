@@ -403,7 +403,9 @@ class Map:
         return length
         
 
-
+    """ 
+    Citation for idea:
+    Looked at - not copied from geeksforgeeks.com  and medium.com. Can reproduce if asked.  """
     def aStarManhattan(self, start, finish): # A* algorithm to solve thinned maze via Manhattan Distance
         count = 0 
         open_list = [] # list of open nodes to explore
