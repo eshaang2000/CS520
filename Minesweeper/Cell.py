@@ -3,7 +3,8 @@ class Cell:
     def __init__(self):
         # super().__init__()
         self.covered = True #Boolean value that is covered 
-        self.mines = 0 #Number of mines around
+        self.mines = -10 #Number of mines around
+        self.minesIdentified = 0 # number of mines that are identified around a cell
         self.hidden = 0 #Number of hidden cells around current cell
         self.safe = 0 #number of cells that are uncovered and are safe
         self.isMine = False #boolean value that tells you if the player has flagged it
@@ -62,6 +63,27 @@ class Board:
         ans+=self.isSafe1(m+1, n-1)
         ans+=self.isSafe1(m-1, n+1)
         self.board[m][n].safe=ans
+
+    def isMine1(self, m, n):
+        if m<0 or n<0:
+            return 0
+        if m>=len(self.board) or n>=len(self.board):
+            return 0
+        if self.board[m][n].isMine == True:
+            return 1
+        return 0
+
+    def findMine(self, m, n):
+        ans = 0
+        ans+=self.isMine1(m-1, n)
+        ans+=self.isMine1(m+1, n)
+        ans+=self.isMine1(m+1, n+1)
+        ans+=self.isMine1(m-1, n-1)
+        ans+=self.isMine1(m, n+1)
+        ans+=self.isMine1(m, n-1)
+        ans+=self.isMine1(m+1, n-1)
+        ans+=self.isMine1(m-1, n+1)
+        self.board[m][n].minesIdentified=ans
     
 
     def printCovered(self):
@@ -89,6 +111,34 @@ class Board:
                 self.findSafe(i,j)
                 print(self.board[i][j].safe, end=" ")
             print()
+
+    def printMine(self):
+        for i in range(len(self.board)):
+            for j in range(len(self.board)):
+                self.findMine(i,j)
+                print(self.board[i][j].minesIdentified, end=" ")
+            print()
+
+    def makeHidden(self):
+        for i in range(len(self.board)):
+            for j in range(len(self.board)):
+                self.findHidden(i, j)
+                # print(self.board[i][j].hidden, end=" ")
+            # print()
+
+    def makeSafe(self):
+        for i in range(len(self.board)):
+            for j in range(len(self.board)):
+                self.findSafe(i,j)
+                # print(self.board[i][j].safe, end=" ")
+            # print()
+
+    def makeMine(self):
+        for i in range(len(self.board)):
+            for j in range(len(self.board)):
+                self.findMine(i,j)
+                # print(self.board[i][j].minesIdentified, end=" ")
+            # print()
 
     def printIsMine(self):
         for i in range(len(self.board)):

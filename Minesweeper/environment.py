@@ -81,7 +81,7 @@ def printGrid(numbers1, n):
         print()
 
 
-def show_mines(n, mine_values):
+def show_mines(numbers, n, mine_values):
     for r in range(n):
         for col in range(n):
             if numbers[r][col] == -1:
