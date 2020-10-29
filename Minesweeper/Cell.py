@@ -1,13 +1,13 @@
 import numpy as np
 class Cell:
     def __init__(self):
-        super().__init__()
-        self.covered = True
-        self.mines = 0
-        self.hidden = 0
-        self.safe = 0
-        self.isMine = False
-        self.isSafe = False
+        # super().__init__()
+        self.covered = True #Boolean value that is covered 
+        self.mines = 0 #Number of mines around
+        self.hidden = 0 #Number of hidden cells around current cell
+        self.safe = 0 #number of cells that are uncovered and are safe
+        self.isMine = False #boolean value that tells you if the player has flagged it
+        self.isSafe = False #if opened and not a mine
 
 class Board:
     def __init__(self, n):
@@ -42,7 +42,7 @@ class Board:
         ans+=self.isHidden(m-1, n+1)
         self.board[m][n].hidden=ans
     
-    def isSafe(self, m, n):
+    def isSafe1(self, m, n):
         if m<0 or n<0:
             return 0
         if m>=len(self.board) or n>=len(self.board):
@@ -53,14 +53,14 @@ class Board:
 
     def findSafe(self, m, n):
         ans = 0
-        ans+=self.isSafe(m+1, n)
-        ans+=self.isSafe(m-1, n)
-        ans+=self.isSafe(m+1, n+1)
-        ans+=self.isSafe(m-1, n-1)
-        ans+=self.isSafe(m, n+1)
-        ans+=self.isSafe(m, n-1)
-        ans+=self.isSafe(m+1, n-1)
-        ans+=self.isSafe(m-1, n+1)
+        ans+=self.isSafe1(m-1, n)
+        ans+=self.isSafe1(m+1, n)
+        ans+=self.isSafe1(m+1, n+1)
+        ans+=self.isSafe1(m-1, n-1)
+        ans+=self.isSafe1(m, n+1)
+        ans+=self.isSafe1(m, n-1)
+        ans+=self.isSafe1(m+1, n-1)
+        ans+=self.isSafe1(m-1, n+1)
         self.board[m][n].safe=ans
     
 
@@ -79,12 +79,14 @@ class Board:
     def printHidden(self):
         for i in range(len(self.board)):
             for j in range(len(self.board)):
+                self.findHidden(i, j)
                 print(self.board[i][j].hidden, end=" ")
             print()
 
     def printSafe(self):
         for i in range(len(self.board)):
             for j in range(len(self.board)):
+                self.findSafe(i,j)
                 print(self.board[i][j].safe, end=" ")
             print()
 
