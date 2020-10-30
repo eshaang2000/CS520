@@ -3,7 +3,7 @@ import numpy as np
 import Cell
 import random
 score = 0
-n = 12
+n = 10
 mines = 20
 
 # print(board)
@@ -148,7 +148,7 @@ def check(n, board1): # this iterates over the whole board and find things that 
     # print("randoo")
     k = random.randint(0, n-1)
     l = random.randint(0, n-1)
-    while(board1.board[k][l].covered==False):
+    while(board1.board[k][l].covered==False and board1.board[k][l].isMine==True):
         k = random.randint(0, n-1)
         l = random.randint(0, n-1)
     board1 = makeQuery(k,l,board1)
