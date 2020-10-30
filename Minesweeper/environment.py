@@ -93,7 +93,7 @@ def query(m, n, numbers):
 
 def makeBoard(n, mines):
     numbers = makeGrid(n)
-    numbers = set_mines(numbers, n, mines)
+    numbers = set_mines(numbers, mines, n)
     numbers = set_values(numbers, n)
     return numbers
 

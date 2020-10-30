@@ -3,8 +3,8 @@ import numpy as np
 import Cell
 import random
 score = 0
-n = 4
-mines = 4
+n = 12
+mines = 20
 
 # print(board)
 # for i in range(len(board)):
@@ -28,8 +28,6 @@ def makeQuery(m, n, board):
     board.board[m][n].isSafe=True
     board.board[m][n].covered=False
     board.board[m][n].mines=query
-    # board.board[m][n].hidden=board.findHidden(m, n)
-    # board.board[m][n].safe=board.findSafe(m,n)
     board.makeSafe()
     board.makeHidden()
     board.makeMine()
@@ -51,9 +49,8 @@ def flag(m, n, board):
     board.board[m][n].mines = -1
     return board
 
-duv = 0
-hiddenBoard = environment.makeBoard(n, mines)
-hiddenBoard = np.asarray(hiddenBoard)
+# duv = 0
+
 # hiddeBoard = 0
 """ 
 1. First we randomly query one cell
@@ -82,6 +79,7 @@ def mineNator(mines, hidden, minesIdentified):
 
 
 def isZero(m, n, board):
+    # if(board.board[m][n])
     board = makeQuery(m-1, n, board)
     board = makeQuery(m-1, n-1, board)
     board = makeQuery(m-1, n+1, board)
@@ -110,18 +108,10 @@ def markSafe(m, n, board):
         return board
     if board.board[m][n].isMine == True: # you don't want to querry mines
         return board
-    query = environment.query(m, n, hiddenBoard)
-    if query == -1:
-        print("Boom")
-        exit()
-    board.board[m][n].isSafe=True
-    board.board[m][n].covered=False
-    board.board[m][n].mines=query
-    # board.board[m][n].hidden=board.findHidden(m, n)
-    # board.board[m][n].safe=board.findSafe(m,n)
-    board.makeSafe()
-    board.makeHidden()
-    board.makeMine()
+    board = makeQuery(m, n, board)
+    # board.makeSafe()
+    # board.makeHidden()
+    # board.makeMine()
     return board
 
 def safes(m, n, board): # you try it for everything
@@ -135,27 +125,27 @@ def safes(m, n, board): # you try it for everything
     board = markSafe(m+1, n, board)
     return board
 
-
-
-board1= Cell.Board(n)
 def check(n, board1): # this iterates over the whole board and find things that satisy the things, also check for zeroes
     flag = False
     for i in range(n):
         for j in range(n):
+            # board1.makeSafe()
+            # board1.makeHidden()
+            # board1.makeMine()
             if(board1.board[i][j].mines==0):
                 board1 = isZero(i, j, board1)
-                print("zeroes go off")
+                # print("zeroes go off")
                 # return board1
             elif mineNator(board1.board[i][j].mines, board1.board[i][j].hidden, board1.board[i][j].minesIdentified):
-                print("minenator goes off")
-                print(str(i)+" and "+str(j))
+                # # print("minenator goes off")
+                # print(str(i)+" and "+str(j))
                 board1 = markMine(i, j, board1)
                 return board1
             elif safeNator(board1.board[i][j].mines, board1.board[i][j].hidden, board1.board[i][j].safe):
-                print("safenator goes off")
+                # print("safenator goes off")
                 board1 = safes(i,j, board1)
                 return board1
-    print("randoo")
+    # print("randoo")
     k = random.randint(0, n-1)
     l = random.randint(0, n-1)
     while(board1.board[k][l].covered==False):
@@ -182,10 +172,38 @@ def main(n, board1):
     # print(fin(n, board1))
     while(fin(n, board1)):
         board1 = check(n, board1)
-    print(score)
-
-# main(n, board1)
-
+    print("The score is")
+    print((mines-score)/mines)
+    return (mines-score)/mines
+# print(hiddenBoard)
+def checkMain(board, n):
+    for i in range(n):
+        for j in range(n):
+            if(board.board[i][j].covered):
+                return -1
+            if(board.board[i][j].isMine==True):
+                if hiddenBoard[i][j] ==-1:
+                    print("cool")
+                else:
+                    print(i)
+                    print(j)
+                    return -2
+# i=0
+score1=0
+hiddenBoard = environment.makeBoard(n, mines)
+hiddenBoard = np.asarray(hiddenBoard)
+print(hiddenBoard)
+board1=Cell.Board(n)
+# board1.printMine()
+score1=main(n, board1)
+# i+=1
+# print(score1/1)
+# print(board1.printIsMine())
+# print(checkMain(board1, n))
+# print(board1)
+    # i+=1
+# print(hiddenBoard)
+# board1.printCovered()
 # board1 = check(n, board1)
 
 
