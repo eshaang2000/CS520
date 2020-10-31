@@ -1,7 +1,16 @@
 import environment
 import numpy as np
 import random
-
+score = 0
+n = 10
+m = 8
+hiddenBoard = np.asfarray(environment.makeBoard(n, m))
+board = np.zeros((n, n))
+board.fill(-10)
+known_safe = set()
+known_mine = set()
+explored = set()#to mark the stuff that has already been minenatored or safenatored
+knowledge_base = []
 #so this is good
 def mark_mine(x, y):
     if(x<0 or y<0):
@@ -81,6 +90,7 @@ def makeRandomGuess():
     query(a[0], a[1])
     if board[a[0]][a[1]] == -1:
         print("unlucky")
+        # score+=1
     explored.add((a[0], a[1]))
 
 def query(x, y):
@@ -112,7 +122,7 @@ def minenator():
                 removal.append(i)
     for i in removal:
         knowledge_base.remove(i)
-    print(known_mine)    
+    # print(known_mine)    
     return flag1
                 # print("wor") # we have to do something for the knowledge pass - just mark everything as mines 
 
@@ -124,7 +134,7 @@ def safenator():
     for i in knowledge_base:
         for j in i:
             if 0 == j:
-                print(i)
+                # print(i)
                 removal.append(i)
                 if len(i[j]) == 0:
                     continue
@@ -137,7 +147,7 @@ def safenator():
                     afterQuery()
     for i in removal:
         knowledge_base.remove(i)
-    print(known_safe) 
+    # print(known_safe) 
     return flag1
 
 """ 
@@ -164,8 +174,8 @@ def setanator():
                 set2 = set(listGetter(j))
                 set3 = set2.difference(set1)
                 count3 = queryGetter(j) - queryGetter(i)
-                print(set3)
-                print(count3)
+                # print(set3)
+                # print(count3)
                 count.append(count3)
                 arrs.append(list(set3))
     # print(count)
@@ -199,41 +209,57 @@ def fin():
                 return False
     return True
 
-score = 0
-n = 14
-m = 10
-hiddenBoard = np.asfarray(environment.makeBoard(n, m))
-board = np.zeros((n, n))
-board.fill(-10)
-known_safe = set()
-known_mine = set()
-explored = set()#to mark the stuff that has already been minenatored or safenatored
-knowledge_base = []
-print(hiddenBoard)
-makeRandomGuess()
-afterQuery()
-while(not fin()):
-    flag1 = False
-    # input("Press Enter to continue...")
-    print("setanator")
-    setanator()
-    print("safenator")
-    flag2= safenator()
-    flag1 = flag1 or flag2
-    print(flag1)
-    print("minenator")
-    flag3 = minenator()
-    flag1 = flag1 or flag3
-    q = knowledge_base
+
+def test(n1, m1):
+    global score
+    global n
+    global m
+    global hiddenBoard
+    global board
+    global known_safe
+    global known_mine
+    global explored
+    global knowledge_base
+    n = n1
+    m = m1
+    hiddenBoard = np.asfarray(environment.makeBoard(n, m))
+    board = np.zeros((n, n))
+    board.fill(-10)
+    known_safe = set()
+    known_mine = set()
+    explored = set()#to mark the stuff that has already been minenatored or safenatored
+    knowledge_base = []
+    print(hiddenBoard)
+    makeRandomGuess()
     afterQuery()
-    if fin():
-        print("the score is")
-        print(score)
-        break
-    # print(flag1)
-    if flag1 == False:
-        print("making a random guess")
-        makeRandomGuess()
-    print(knowledge_base)
-    print(board)
-    print(score)
+
+    while(not fin()):
+        flag1 = False
+            # input("Press Enter to continue...")
+            # print("setanator")
+        setanator()
+            # print("safenator")
+        flag2= safenator()
+        flag1 = flag1 or flag2
+            # print(flag1)
+            # print("minenator")
+        flag3 = minenator()
+        flag1 = flag1 or flag3
+        q = knowledge_base
+        afterQuery()
+        if fin():
+            print(knowledge_base)
+            print("the score is")
+            print(board)
+            print((m-score)/m)
+            return((m-score)/m)
+            break
+            # print(flag1)
+        if flag1 == False:
+                # print("making a random guess")
+            makeRandomGuess()
+            # print(knowledge_base)
+            # print(board)
+            # print(score)
+    # test(8, 10)
+print(test(14, 30))
