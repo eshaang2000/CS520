@@ -200,8 +200,8 @@ def fin():
     return True
 
 score = 0
-n = 10
-m = 8
+n = 14
+m = 10
 hiddenBoard = np.asfarray(environment.makeBoard(n, m))
 board = np.zeros((n, n))
 board.fill(-10)
