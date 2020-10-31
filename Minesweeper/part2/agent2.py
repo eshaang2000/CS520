@@ -1,16 +1,6 @@
 import environment
 import numpy as np
 import random
-score = 0
-n = 10
-m = 8
-hiddenBoard = np.asfarray(environment.makeBoard(n, m))
-board = np.zeros((n, n))
-board.fill(-10)
-known_safe = set()
-known_mine = set()
-explored = set()#to mark the stuff that has already been minenatored or safenatored
-knowledge_base = []
 
 #so this is good
 def mark_mine(x, y):
@@ -107,14 +97,21 @@ def flag(x, y):
 #iterates through the whole array and find out mines in the knowledge base
 def minenator():
     flag1 = False
+    removal = []
     for i in knowledge_base:
         for j in i:
+            if j ==0 :
+                continue
             if len(i[j]) == j:
                 flag1 = True
                 for k in i[j]:
                     mark_mine(k[0], k[1])
                     flag(k[0], k[1])
                     explored.add((k[0], k[1]))
+                    afterQuery()
+                removal.append(i)
+    for i in removal:
+        knowledge_base.remove(i)
     print(known_mine)    
     return flag1
                 # print("wor") # we have to do something for the knowledge pass - just mark everything as mines 
@@ -123,14 +120,23 @@ def minenator():
 
 def safenator():
     flag1 = False
+    removal = []
     for i in knowledge_base:
         for j in i:
             if 0 == j:
+                print(i)
+                removal.append(i)
+                if len(i[j]) == 0:
+                    continue
                 flag1 = True
                 for k in i[j]:
+                    # remove_knowledge(k[0], k[1])
                     mark_safe(k[0], k[1])
                     query(k[0], k[1])
                     explored.add((k[0], k[1]))
+                    afterQuery()
+    for i in removal:
+        knowledge_base.remove(i)
     print(known_safe) 
     return flag1
 
@@ -141,6 +147,7 @@ def setanator():
     flag1 = False
     count = []
     arrs = []
+    removal = []
     for i in knowledge_base:
         for j in knowledge_base:
             if i==j:
@@ -151,6 +158,7 @@ def setanator():
             count2 = 0
             count3 = 0
             if(isSubset(listGetter(i), listGetter(j))): #i is a subset of j
+                removal.append(j)
                 flag1 = True
                 set1 = set(listGetter(i))
                 set2 = set(listGetter(j))
@@ -162,9 +170,12 @@ def setanator():
                 arrs.append(list(set3))
     # print(count)
     # print(arrs)
+
     for i in range(len(count)):
         # print(arrs[i])
         add_knowledge(count[i], arrs[i])
+    # for i in removal:
+    #     knowledge_base.remove(i)
     return flag1
 
 
@@ -188,24 +199,38 @@ def fin():
                 return False
     return True
 
+score = 0
+n = 10
+m = 8
+hiddenBoard = np.asfarray(environment.makeBoard(n, m))
+board = np.zeros((n, n))
+board.fill(-10)
+known_safe = set()
+known_mine = set()
+explored = set()#to mark the stuff that has already been minenatored or safenatored
+knowledge_base = []
 print(hiddenBoard)
 makeRandomGuess()
 afterQuery()
 while(not fin()):
     flag1 = False
-    input("Press Enter to continue...")
+    # input("Press Enter to continue...")
     print("setanator")
-    flag1 = setanator()
+    setanator()
     print("safenator")
-    flag1 = safenator()
+    flag2= safenator()
+    flag1 = flag1 or flag2
+    print(flag1)
     print("minenator")
-    flag1 = minenator()
-    q = explored
+    flag3 = minenator()
+    flag1 = flag1 or flag3
+    q = knowledge_base
     afterQuery()
     if fin():
         print("the score is")
         print(score)
         break
+    # print(flag1)
     if flag1 == False:
         print("making a random guess")
         makeRandomGuess()
