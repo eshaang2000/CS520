@@ -103,7 +103,7 @@ So the advanced agent goes through the whole knowledge base and tries to get mor
 
 PS: This can be improved using probability where it does not randomly open spaces. 
 \section{Performance - 1}
-pass
+The step by step was is in a text file attached to the submission. Sorry for the inconvenience. 
 \section{Performance - 2}
 So I chose a 10X10 board for my agents to play. I start out with 8 mines and then increase it by 2 everytime until I have 26 mines in a 10X10 board. I then ran each agent a 100 times to get a good average for the success rate. The table and graph below capture my results.\\
 The score is calculated by $\frac{mines - mines\ exploded}{mines} * 100$
@@ -136,4 +136,8 @@ We see that agent 2 does a lot better when there is a higher density. The graph 
 As far as efficiency is concerned, this is a very computationally expensive task. We have to constantly check if there is any information in our knowledge base that we can use. This is $O(n^2)$ every single time we have to make a move. This causes the program to slow down very quickly as the complexity increases. This can be improved if we use the correct data structures for our knowledge base. If we use sets effectively we can look up in constant time. 
 \subsection{Agent 2}
 The subset function is especially computationally and space expensive. Since we use arrays and dictionaries, for a big enough data set, space will be very hard to optimize. The subset function goes through the whole knowledge base and compares each and every entry against each other to draw inferences. 
+
+\section{Citations}
+https://cs50.harvard.edu/ai/2020/projects/1/minesweeper/\\
+Idea taken from there for inference
 \end{document}

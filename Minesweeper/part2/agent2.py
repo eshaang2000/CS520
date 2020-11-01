@@ -234,13 +234,16 @@ def test(n1, m1):
     known_mine = set()
     explored = set()#to mark the stuff that has already been minenatored or safenatored
     knowledge_base = []
+    print("This is the hidden board")
     print(hiddenBoard)
+    print("At first we make a random guess")
     makeRandomGuess()
     afterQuery()
-
+    print("This our board")
+    print(board)
     while(not fin()):
         flag1 = False
-            # input("Press Enter to continue...")
+        input("Press Enter to continue...")
             # print("setanator")
         # setanator()
             # print("safenator")
@@ -271,7 +274,10 @@ def test(n1, m1):
             # print(knowledge_base)
             # print(board)
             # print(score)
+        print("This is what it looks after the obvious moves are done")
+        print(board)
     # test(8, 10)
-for i in range(100):
-    if test(8, 10) == None:
-        print("danger")
+test(8, 10)
+# for i in range(100):
+#     if test(8, 10) == None:
+#         print("danger")
