@@ -77,12 +77,17 @@ def afterQuery():
                 add_knowledge(query, arr)
 
 def randomGuess():
-    k = random.randint(0, n-1)
-    l = random.randint(0, n-1)
-    while (k,l) in known_safe or (k,l) in known_mine:
-        k = random.randint(0, n-1)
-        l = random.randint(0, n-1)
-    ans = (k,l)
+    # k = random.randint(0, n-1)
+    # l = random.randint(0, n-1)
+    # while (k,l) in known_safe or (k,l) in known_mine:
+    #     k = random.randint(0, n-1)
+    #     l = random.randint(0, n-1)
+    rando = []
+    for i in range(n):
+        for j in range(n):
+            if board[i][j]==-10:
+                rando.append((i, j))
+    ans = random.choice(rando)
     return ans
 
 def makeRandomGuess():
@@ -237,7 +242,7 @@ def test(n1, m1):
         flag1 = False
             # input("Press Enter to continue...")
             # print("setanator")
-        setanator()
+        # setanator()
             # print("safenator")
         flag2= safenator()
         flag1 = flag1 or flag2
@@ -248,11 +253,16 @@ def test(n1, m1):
         q = knowledge_base
         afterQuery()
         if fin():
-            print(knowledge_base)
+            # print(knowledge_base)
             print("the score is")
             print(board)
-            print((m-score)/m)
-            return((m-score)/m)
+            sc = m
+            for i in range(n):
+                for j in range(n):
+                    if board[i][j] == -1:
+                        sc-=1
+            print((sc)/m)
+            return((sc)/m)
             break
             # print(flag1)
         if flag1 == False:
@@ -262,4 +272,6 @@ def test(n1, m1):
             # print(board)
             # print(score)
     # test(8, 10)
-print(test(14, 30))
+for i in range(100):
+    if test(8, 10) == None:
+        print("danger")
