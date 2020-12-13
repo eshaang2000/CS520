@@ -1,4 +1,6 @@
 import math
+from collections import Counter
+
 from PIL import Image
 import numpy as np
 import random
@@ -263,14 +265,62 @@ def stripGray(grayData):
     return dope
 
 
-"""
-1. Write code to get a single number that would get the rep of the 3x3 data
-"""
+def getColors(indexes, coloredImage):
+    colors = []
+    for i in range(len(indexes)):
+        x = indexes[i][0]
+        y = indexes[i][1]
+        colors.append(coloredImage[x][y])
+    return colors
+
+
+def majority(colors):
+    co = [tuple(i) for i in colors]
+    freqDict = Counter(co)
+    maxim = 0
+    mkey = None
+    for (key, val) in freqDict.items():
+        if val > maxim:
+            mkey = key
+            maxim = val
+    return mkey
+
+
+
 
 i = convertImage(image)  # this is an image that is returned in gray scale
 trainGray, testGray = partitionImage(i)  # we split his image in half - this is the gray scale array
 trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the gray scale array
 trainAvgGray = grayAverage(trainGray)
+
+# make a huge list that can be trained and the results are then got
+temp = []
+tempIndex = dict()
+for i in range(len(trainAvgGray)):
+    for j in range(len(trainAvgGray[0])):
+        temp.append(trainAvgGray[i][j])
+        tempIndex[len(temp) - 1] = (i, j)
+
+indexes = [(0, 0), (1, 0), (1, 1)]
+print(getColors(indexes, trainRGB))
+print(majority(getColors(indexes, trainRGB)))
+
+
+
+# the machine learning model is ready
+# temp1 = np.asarray(temp)
+# nn = NearestNeighbors(5, algorithm='kd_tree')
+# k = nn.fit(temp1)
+# test = np.array([234, 255])  # so this is just a dummy holder to get the image place
+# # indexs is what we need
+# values, indexs = nn.kneighbors(test.reshape(1, -1), 5)
+# # Now we can find the indexes necessary to find to do the assignment
+
+"""
+1. get the indexes
+2. get the colors that were put on there
+3. find the majority representation
+4. put it on there"""
 
 # print(trainAvgGray)
 # df = pd.DataFrame(trainAvgGray)
@@ -296,24 +346,9 @@ trainAvgGray = grayAverage(trainGray)
 # da.save("pls.png")
 
 
-
-
-temp = []
-tempIndex = dict()
-for i in range(len(trainAvgGray)):
-    for j in range(len(trainAvgGray[0])):
-        temp.append(trainAvgGray[i][j])
-        tempIndex[len(temp)-1] = (i, j)
-
-
-temp1 = np.asarray(temp)
-print(tempIndex)
-nn = NearestNeighbors(5, algorithm='kd_tree')
-k = nn.fit(temp1)
-test = np.array([234, 255])
-print("here")
-print(nn.kneighbors(test.reshape(1, -1), 5))
-print("now here")
+# print("here")
+# print(nn.kneighbors(test.reshape(1, -1), 5))
+# print("now here")
 # imag, C, C1 = kMeansClustering(10, trainRGB)
 
 # for i in [291183, 185444, 261385, 313990, 204820]:
