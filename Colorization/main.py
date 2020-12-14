@@ -164,8 +164,7 @@ def saveImageFromArray(arr, mode):
         img = Image.fromarray(arr.astype('uint8'), 'RGB')
         img.save('my.png')
     else:
-        print(len(arr[0][0]))
-        img = Image.fromarray(arr.astype('uint8'), 'L')
+        img = Image.fromarray(arr.astype('uint8'), 'LA')
         img.save('my.png')
 
 
@@ -179,7 +178,7 @@ def saveImageFromArray(arr, mode):
 def kMeansClustering(k, data):
     C = getKCentroids(k)
     iter = 0
-    while iter != 3:
+    while iter != 5:
         print("starting iter no " + str(iter))
         C1 = []
         for i in range(k):
@@ -293,6 +292,12 @@ trainGray, testGray = partitionImage(i)  # we split his image in half - this is 
 trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the gray scale array
 trainAvgGray = grayAverage(trainGray)
 
+imageArray = getArray(image)
+ima, C, C1 = kMeansClustering(5, trainRGB)
+# saveImageFromArray(ima, 1)
+
+
+
 # make a huge list that can be trained and the results are then got
 temp = []
 tempIndex = dict()
@@ -300,20 +305,36 @@ for i in range(len(trainAvgGray)):
     for j in range(len(trainAvgGray[0])):
         temp.append(trainAvgGray[i][j])
         tempIndex[len(temp) - 1] = (i, j)
-
-indexes = [(0, 0), (1, 0), (1, 1)]
-print(getColors(indexes, trainRGB))
-print(majority(getColors(indexes, trainRGB)))
+#
+# indexes = [(0, 0), (1, 0), (1, 1)]
+# print(getColors(indexes, trainRGB))
+# print(majority(getColors(indexes, trainRGB)))
 
 
 
 # the machine learning model is ready
-# temp1 = np.asarray(temp)
-# nn = NearestNeighbors(5, algorithm='kd_tree')
-# k = nn.fit(temp1)
+temp1 = np.asarray(temp)
+nn = NearestNeighbors(5, algorithm='kd_tree')
+k = nn.fit(temp1)
+
+ans = np.zeros((len(testGray), len(testGray[0]), 3))
+for i in range(len(testGray)):
+    for j in range(len(testGray[0])):
+        test = np.asarray(testGray[i][j])
+        print(test)
+        values, indexs = nn.kneighbors(test.reshape(1, -1), 5)
+        indexes = []
+        for k in indexs[0]:
+            indexes.append(tempIndex[k])
+        print(indexes)
+        ans[i][j] = majority(getColors(indexes, ima))
+        print(i, j)
+
+print(ans)
+saveImageFromArray(ans, 1)
+
 # test = np.array([234, 255])  # so this is just a dummy holder to get the image place
 # # indexs is what we need
-# values, indexs = nn.kneighbors(test.reshape(1, -1), 5)
 # # Now we can find the indexes necessary to find to do the assignment
 
 """
