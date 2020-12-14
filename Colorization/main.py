@@ -159,13 +159,13 @@ def classifyBlack(C, dataPoint):
     return minim
 
 
-def saveImageFromArray(arr, mode):
+def saveImageFromArray(arr, mode, name):
     if mode == 1:
         img = Image.fromarray(arr.astype('uint8'), 'RGB')
-        img.save('my.png')
+        img.save(name)
     else:
         img = Image.fromarray(arr.astype('uint8'), 'LA')
-        img.save('my.png')
+        img.save(name)
 
 
 #
@@ -178,7 +178,7 @@ def saveImageFromArray(arr, mode):
 def kMeansClustering(k, data):
     C = getKCentroids(k)
     iter = 0
-    while iter != 5:
+    while iter != 20:
         print("starting iter no " + str(iter))
         C1 = []
         for i in range(k):
@@ -208,7 +208,7 @@ def kMeansClustering(k, data):
 def kMeansClusteringBlack(k, data):
     C = getKCentroidsBlack(k)
     iter = 0
-    while iter != 8:
+    while iter != 20:
         print("starting iter no " + str(iter))
         C1 = []
         for i in range(k):
@@ -293,9 +293,10 @@ trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the
 trainAvgGray = grayAverage(trainGray)
 
 imageArray = getArray(image)
-ima, C, C1 = kMeansClustering(5, trainRGB)
+# ima, C, C1 = kMeansClustering(20, trainRGB)
 # saveImageFromArray(ima, 1)
-
+saveImageFromArray(trainRGB, 1, "rbgtrain.png")
+# saveImageFromArray(ima, 1, "rgbklustered.png")
 
 
 # make a huge list that can be trained and the results are then got
@@ -314,7 +315,7 @@ for i in range(len(trainAvgGray)):
 
 # the machine learning model is ready
 temp1 = np.asarray(temp)
-nn = NearestNeighbors(5, algorithm='kd_tree')
+nn = NearestNeighbors(6, algorithm='kd_tree')
 k = nn.fit(temp1)
 
 ans = np.zeros((len(testGray), len(testGray[0]), 3))
@@ -322,16 +323,16 @@ for i in range(len(testGray)):
     for j in range(len(testGray[0])):
         test = np.asarray(testGray[i][j])
         print(test)
-        values, indexs = nn.kneighbors(test.reshape(1, -1), 5)
+        values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
         indexes = []
         for k in indexs[0]:
             indexes.append(tempIndex[k])
-        print(indexes)
-        ans[i][j] = majority(getColors(indexes, ima))
+        # print(indexes)
+        ans[i][j] = majority(getColors(indexes, trainRGB))
         print(i, j)
 
 print(ans)
-saveImageFromArray(ans, 1)
+saveImageFromArray(ans, 1, "ans.png")
 
 # test = np.array([234, 255])  # so this is just a dummy holder to get the image place
 # # indexs is what we need
