@@ -194,7 +194,7 @@ def loss(ans, test):
 def kMeansClustering(k, data):
     C = getKCentroids(k)
     iter = 0
-    while iter != 20:
+    while iter != 10:
         flag = True
         print("starting iter no " + str(iter))
         C1 = []
@@ -216,9 +216,13 @@ def kMeansClustering(k, data):
         for i in range(len(C)):
             # print(C[i])
             # print(cOld[i])
-            if not np.array_equal(C[i], cOld[i]):
-                flag = False
-                break
+            # if not np.array_equal(C[i], cOld[i]):
+            #     flag = False
+            #     break
+            for j in range(len(C[i])):
+                if abs(C[i][j] - cOld[i][j]) > 3:
+                    flag = False
+                    break
 
         # for i in range(len(cOld)):
         #     print(C[i])
@@ -307,17 +311,37 @@ def getColors(indexes, coloredImage):
     return colors
 
 
+def convertRGB(r, g, b):
+    return 65536 * r + 256 * g + b
+
+
+def convertToRGB(rgb):
+    r = [rgb >> 16 & 255, rgb >> 8 & 255, rgb & 255]
+    return r
+
+
 def getProbabilities(colors):
     co = [tuple(i) for i in colors]
     freqDict = Counter(co)
     probs = dict()
     mkey = None
     tot = 0
+    p = []
+    i = []
     for (key, val) in freqDict.items():
         tot += val
     for (key, val) in freqDict.items():
         probs[key] = val / tot
-    return probs
+    for (key, val) in probs.items():
+        p.append(val)
+        i.append(int(convertRGB(key[0], key[1], key[2])))
+    print(p)
+    print(i)
+    ans = random.choices(i, p)
+    print(ans)
+    print(ans[0])
+    ans1 = convertToRGB(ans[0])
+    return ans1
 
 
 # outputs the majority color
@@ -339,7 +363,7 @@ trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the
 trainAvgGray = grayAverage(trainGray)
 
 imageArray = getArray(image)
-ima, C, C1 = kMeansClustering(7, trainRGB)
+ima, C, C1 = kMeansClustering(5, trainRGB)
 # saveImageFromArray(ima, 1)
 saveImageFromArray(trainRGB, 1, "rbgtrain.png")
 saveImageFromArray(ima, 1, "rgbklustered.png")
@@ -364,28 +388,35 @@ nn = NearestNeighbors(6, algorithm='kd_tree')
 k = nn.fit(temp1)
 
 ans = np.zeros((len(testGray), len(testGray[0]), 3))
-test = np.asarray(testGray[0][0])
-print(test)
-values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
-indexes = []
-for k in indexs[0]:
-    indexes.append(tempIndex[k])
+# test = np.asarray(testGray[300][300])
+# print(test)
+# values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
+# indexes = []
+# for k in indexs[0]:
+#     indexes.append(tempIndex[k])
     # print(indexes)
-ans[0][0] = majority(getColors(indexes, ima))
-print(getProbabilities(getColors(indexes, ima)))
-print(0, 0)
+# ans[300][300] = majority(getColors(indexes, ima))
+# print(getProbabilities(getColors(indexes, ima)))
+# ans[300][300] = getProbabilities(getColors(indexes, ima))
+# print(300, 300)
+# print(ans[300][300])
 
-# for i in range(len(testGray)):
-#     for j in range(len(testGray[0])):
-#         test = np.asarray(testGray[i][j])
-#         print(test)
-#         values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
-#         indexes = []
-#         for k in indexs[0]:
-#             indexes.append(tempIndex[k])
-#         # print(indexes)
-#         ans[i][j] = majority(getColors(indexes, ima))
-#         print(i, j)
+
+for i in range(len(testGray)):
+    for j in range(len(testGray[0])):
+        test = np.asarray(testGray[i][j])
+        print("This is the test")
+        print(test)
+        values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
+        indexes = []
+        print(indexes)
+        for k in indexs[0]:
+            indexes.append(tempIndex[k])
+        # print(indexes)
+        b = getProbabilities(getColors(indexes, ima))
+        print(b)
+        ans[i][j] = b
+        print(i, j)
 
 print(ans)
 print(loss(ans, testRGB))

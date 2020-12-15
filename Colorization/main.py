@@ -51,7 +51,7 @@ def getInitialCentroids():  # returns one random centroid
 def getInitialCentroidsBlack():
     return (random.randint(0, 255), 255)
 
-
+#11854815266516278
 def getKCentroids(k):
     ans = []
     i = 0
@@ -329,7 +329,7 @@ trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the
 trainAvgGray = grayAverage(trainGray)
 
 imageArray = getArray(image)
-ima, C, C1 = kMeansClustering(7, trainRGB)
+ima, C, C1 = kMeansClustering(5, trainRGB)
 # saveImageFromArray(ima, 1)
 saveImageFromArray(trainRGB, 1, "rbgtrain.png")
 saveImageFromArray(ima, 1, "rgbklustered.png")
