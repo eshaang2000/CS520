@@ -216,13 +216,9 @@ def kMeansClustering(k, data):
         for i in range(len(C)):
             # print(C[i])
             # print(cOld[i])
-            # if not np.array_equal(C[i], cOld[i]):
-            #     flag = False
-            #     break
-            for j in range(len(C[i])):
-                if abs(C[i][j] - cOld[i][j]) > 3:
-                    flag = False
-                    break
+            if not np.array_equal(C[i], cOld[i]):
+                flag = False
+                break
 
         # for i in range(len(cOld)):
         #     print(C[i])
@@ -311,6 +307,20 @@ def getColors(indexes, coloredImage):
     return colors
 
 
+def getProbabilities(colors):
+    co = [tuple(i) for i in colors]
+    freqDict = Counter(co)
+    probs = dict()
+    mkey = None
+    tot = 0
+    for (key, val) in freqDict.items():
+        tot += val
+    for (key, val) in freqDict.items():
+        probs[key] = val / tot
+    return probs
+
+
+# outputs the majority color
 def majority(colors):
     co = [tuple(i) for i in colors]
     freqDict = Counter(co)
@@ -348,22 +358,34 @@ for i in range(len(trainAvgGray)):
 
 
 # the machine learning model is ready
+print("Start kd tree training")
 temp1 = np.asarray(temp)
 nn = NearestNeighbors(6, algorithm='kd_tree')
 k = nn.fit(temp1)
 
 ans = np.zeros((len(testGray), len(testGray[0]), 3))
-for i in range(len(testGray)):
-    for j in range(len(testGray[0])):
-        test = np.asarray(testGray[i][j])
-        print(test)
-        values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
-        indexes = []
-        for k in indexs[0]:
-            indexes.append(tempIndex[k])
-        # print(indexes)
-        ans[i][j] = majority(getColors(indexes, ima))
-        print(i, j)
+test = np.asarray(testGray[0][0])
+print(test)
+values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
+indexes = []
+for k in indexs[0]:
+    indexes.append(tempIndex[k])
+    # print(indexes)
+ans[0][0] = majority(getColors(indexes, ima))
+print(getProbabilities(getColors(indexes, ima)))
+print(0, 0)
+
+# for i in range(len(testGray)):
+#     for j in range(len(testGray[0])):
+#         test = np.asarray(testGray[i][j])
+#         print(test)
+#         values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
+#         indexes = []
+#         for k in indexs[0]:
+#             indexes.append(tempIndex[k])
+#         # print(indexes)
+#         ans[i][j] = majority(getColors(indexes, ima))
+#         print(i, j)
 
 print(ans)
 print(loss(ans, testRGB))
