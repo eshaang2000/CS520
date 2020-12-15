@@ -172,7 +172,13 @@ def saveImageFromArray(arr, mode, name):
 # data = getArray(image)
 #
 
+# finds when the whole thing converges
 def convergence():
+    pass
+
+
+# find the loss when converted to gray scale
+def loss():
     pass
 
 
@@ -207,6 +213,7 @@ def kMeansClustering(k, data):
             image1[j[0]][j[1]] = C[l]
         l += 1
     return image1, C, C1
+
 
 def kMeansClusteringBlack(k, data):
     C = getKCentroidsBlack(k)
@@ -288,8 +295,6 @@ def majority(colors):
     return mkey
 
 
-
-
 i = convertImage(image)  # this is an image that is returned in gray scale
 trainGray, testGray = partitionImage(i)  # we split his image in half - this is the gray scale array
 trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the gray scale array
@@ -313,7 +318,6 @@ for i in range(len(trainAvgGray)):
 # indexes = [(0, 0), (1, 0), (1, 1)]
 # print(getColors(indexes, trainRGB))
 # print(majority(getColors(indexes, trainRGB)))
-
 
 
 # the machine learning model is ready
