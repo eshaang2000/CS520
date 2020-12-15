@@ -7,7 +7,7 @@ import random
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 
-path = "data.png"
+path = "data2.png"
 image = Image.open(path)
 
 
@@ -172,13 +172,17 @@ def saveImageFromArray(arr, mode, name):
 # data = getArray(image)
 #
 
+def convergence():
+    pass
+
+
 # k = 20
 # We now write the code for k means clustering
 # returns image array, Centroids, things that correcpond to the centroid though finding that is pretty easy
 def kMeansClustering(k, data):
     C = getKCentroids(k)
     iter = 0
-    while iter != 20:
+    while iter != 10:
         print("starting iter no " + str(iter))
         C1 = []
         for i in range(k):
@@ -203,7 +207,6 @@ def kMeansClustering(k, data):
             image1[j[0]][j[1]] = C[l]
         l += 1
     return image1, C, C1
-
 
 def kMeansClusteringBlack(k, data):
     C = getKCentroidsBlack(k)
@@ -293,7 +296,7 @@ trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the
 trainAvgGray = grayAverage(trainGray)
 
 imageArray = getArray(image)
-# ima, C, C1 = kMeansClustering(20, trainRGB)
+ima, C, C1 = kMeansClustering(5, trainRGB)
 # saveImageFromArray(ima, 1)
 saveImageFromArray(trainRGB, 1, "rbgtrain.png")
 # saveImageFromArray(ima, 1, "rgbklustered.png")
@@ -328,7 +331,7 @@ for i in range(len(testGray)):
         for k in indexs[0]:
             indexes.append(tempIndex[k])
         # print(indexes)
-        ans[i][j] = majority(getColors(indexes, trainRGB))
+        ans[i][j] = majority(getColors(indexes, ima))
         print(i, j)
 
 print(ans)

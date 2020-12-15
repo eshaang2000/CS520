@@ -64,6 +64,17 @@ def convertToRGB(rgb):
 
 def grayAverage(grayMatrix):
     avg = np.zeros((len(grayMatrix), len(grayMatrix[0]), 2))
+    for i in range(len(grayMatrix)):
+        avg[i][0] = grayMatrix[i][0]
+        avg[i][len(grayMatrix[0])-1] = grayMatrix[i][len(grayMatrix[0])-1]
+    for i in range(len(grayMatrix[0])):
+        avg[0][i] = grayMatrix[0][i]
+        avg[len(grayMatrix)-1][i] = grayMatrix[len(grayMatrix)-1][i]
+    # for i in range(len(grayMatrix)):
+    #     avg[i][0] = grayMatrix[i][0]
+    # for i in range(len(grayMatrix[0])):
+    #     avg[0][i] = grayMatrix[0][i]
+
     for i in range(1, len(grayMatrix) - 1):
         for j in range(1, len(grayMatrix[0]) - 1):
             a = grayMatrix[i][j][0]
@@ -78,7 +89,157 @@ def grayAverage(grayMatrix):
             a /= 9
             avg[i][j] = a
             avg[i][j][1] = grayMatrix[i][j][1]
+    print(avg)
     return avg
+
+
+def getInitialCentroids():  # returns one random centroid
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+
+def getInitialCentroidsBlack():
+    return (random.randint(0, 255), 255)
+
+
+def getKCentroids(k):
+    ans = []
+    i = 0
+    while i != k:
+        c1 = getInitialCentroids()
+        if c1 in ans:
+            continue
+        ans.append(c1)
+        i += 1
+    return ans
+
+
+def getKCentroidsBlack(k):
+    ans = []
+    i = 0
+    while i != k:
+        c1 = getInitialCentroids()
+        if c1 in ans:
+            continue
+        ans.append(c1)
+        i += 1
+    return ans
+
+
+def getDistance(p1, p2):
+    x1 = p1[0]
+    x2 = p2[0]
+    y1 = p1[1]
+    y2 = p2[1]
+    z1 = p1[2]
+    z2 = p2[2]
+
+    dist = math.sqrt(math.pow(x2 - x1, 2) +
+                     math.pow(y2 - y1, 2) +
+                     math.pow(z2 - z1, 2) * 1.0)
+    return dist
+
+
+def getDistanceBlack(p1, p2):
+    x1 = p1[0]
+    x2 = p2[0]
+    y1 = p1[1]
+    y2 = p2[1]
+
+    dist = math.sqrt(math.pow(x2 - x1, 2) +
+                     math.pow(y2 - y1, 2) * 1.0)
+    return dist
+
+
+def average(d1, data):
+    n = len(d1)
+    a1 = 0
+    a2 = 0
+    a3 = 0
+    for i in d1:
+        a1 += data[i[0]][i[1]][0]
+        a2 += data[i[0]][i[1]][1]
+        a3 += data[i[0]][i[1]][2]
+    a1 = a1 / n
+    a2 = a2 / n
+    a3 = a3 / n
+    a1 = round(a1)
+    a2 = round(a2)
+    a3 = round(a3)
+    t = [a1, a2, a3]
+    return t
+
+
+def averageBlack(d1, data):
+    n = len(d1)
+    a1 = 0
+    a2 = 0
+    for i in d1:
+        a1 += data[i[0]][i[1]][0]
+        a2 += data[i[0]][i[1]][1]
+    a1 = a1 / n
+    a2 = a2 / n
+    a1 = round(a1)
+    a2 = round(a2)
+    t = [a1, a2]
+    return t
+
+
+def classify(C, dataPoint):
+    # find the centroid that is of minimum distance for that data point. C is a list of centroids that have to be
+    # gone through
+    minim = 100000000000
+    minDist = 100000000000
+    for j in range(len(C)):
+        dist = getDistance(dataPoint, C[j])
+        if minDist > dist:
+            minim = j
+            minDist = dist
+
+    return minim
+
+
+def classifyBlack(C, dataPoint):
+    # find the centroid that is of minimum distance for that data point. C is a list of centroids that have to be
+    # gone through
+    minim = 100000000
+    minDist = 10000000
+    for j in range(len(C)):
+        dist = getDistanceBlack(dataPoint, C[j])
+        if minDist > dist:
+            minim = j
+            minDist = dist
+
+    return minim
+
+
+def kMeansClustering(k, data):
+    C = getKCentroids(k)
+    iter = 0
+    while iter != 10:
+        print("starting iter no " + str(iter))
+        C1 = []
+        for i in range(k):
+            C1.append(set())
+        for j in range(len(data)):
+            for i in range(len(data[0])):
+                index = classify(C, data[j][i])
+                # print(index)
+                C1[index].add((j, i))
+        for i in range(len(C1)):
+            if len(C1[i]) == 0:
+                continue
+            ctemp = average(C1[i], data)
+            C[i] = ctemp
+        # print(C)
+        iter += 1
+    # print(C)
+    image1 = np.zeros((len(data), len(data[0]), 3))
+    l = 0
+    for i in C1:
+        for j in i:
+            image1[j[0]][j[1]] = C[l]
+        l += 1
+    return image1, C, C1
 
 
 path = "data.png"
@@ -89,13 +250,15 @@ trainRGB, testRGB = partitionImage(image)  # this is the rgb split - this is the
 trainAvgGray = grayAverage(trainGray)
 trainRGBsingle = np.zeros((len(trainRGB), len(trainRGB[0])))
 testRGBsingle = np.zeros((len(trainRGB), len(trainRGB[0])))
+# trainRGB, C, C1 = kMeansClustering(30, trainRGB)
+print(trainRGB)
 for i in range(len(trainRGB)):
     for j in range(len(trainRGB[0])):
         trainRGBsingle[i][j] = convertRGB(trainRGB[i][j][0], trainRGB[i][j][1], trainRGB[i][j][2])
 
-for i in range(len(testRGB)):
-    for j in range(len(testRGB[0])):
-        testRGBsingle[i][j] = convertRGB(testRGB[i][j][0], testRGB[i][j][1], testRGB[i][j][2])
+# for i in range(len(testRGB)):
+#     for j in range(len(testRGB[0])):
+#         testRGBsingle[i][j] = convertRGB(testRGB[i][j][0], testRGB[i][j][1], testRGB[i][j][2])
 
 temp = []
 tempIndex = dict()
@@ -125,15 +288,33 @@ for i in range(len(testRGBsingle)):
         temp4Index[len(temp4) - 1] = (i, j)
 
 regr = LinearRegression()
-t = np.asarray(temp)
-t1 = np.asarray(temp1)
-t1 = t1.reshape(-1, 1)
-t = t.reshape(-1, 1)
-
-t3 = np.asarray(temp3)
-t4 = np.asarray(temp4)
-t4 = t4.reshape(-1, 1)
-t3 = t3.reshape(-1, 1)
-
+plt.scatter([i[0] for i in temp], temp1)
+plt.show()
 regr.fit(temp, temp1)
+print(len(temp))
+print(len(temp1))
+# print(temp5)
+
+temp5 = regr.predict(temp3)
+ans = np.zeros((len(temp5)))
+print(temp5)
+for i in range(len(temp5)):
+    temp5[i] = round(temp5[i])
+ans = np.zeros((len(testRGB), len(testRGB[0]), 3))
+print(temp5)
+print(temp4[0])
+print(convertToRGB(int(temp5[0])))
+print(convertToRGB(int(temp4[0])))
+for i in range(len(temp5)):
+    z = temp4Index[i]
+    x = z[0]
+    y = z[1]
+    ans[x][y] = convertToRGB(int(temp5[i]))
+print(ans)
+saveImageFromArray(ans, 1, "pls.png")
+# for i in range(len(temp5)):
+#     print(temp4[i])
+# print(temp4Index[i])
+# ans = regr.predict(temp5)
+# print(ans)
 print(regr.score(temp3, temp4))
