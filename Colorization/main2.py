@@ -211,6 +211,7 @@ def classifyBlack(C, dataPoint):
 
     return minim
 
+<<<<<<< HEAD
 def loss(ans, test):
     d = 0
     for i in range(len(ans)):
@@ -219,6 +220,8 @@ def loss(ans, test):
                     ans[i][j][2] - test[i][j][2]) ** 2
     d = math.sqrt(d)
     return d / len(ans) / len(ans[0])
+=======
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 
 def kMeansClustering(k, data):
     C = getKCentroids(k)
@@ -249,6 +252,7 @@ def kMeansClustering(k, data):
         l += 1
     return image1, C, C1
 
+<<<<<<< HEAD
 def kMeansClusteringBlack(k, data):
     C = getKCentroidsBlack(k)
     iter = 0
@@ -279,6 +283,8 @@ def kMeansClusteringBlack(k, data):
     return image1, C, C1
 
 
+=======
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 
 path = "data.png"
 image = Image.open(path)
@@ -290,7 +296,10 @@ trainRGBsingle = np.zeros((len(trainRGB), len(trainRGB[0])))
 testRGBsingle = np.zeros((len(trainRGB), len(trainRGB[0])))
 # trainRGB, C, C1 = kMeansClustering(30, trainRGB)
 print(trainRGB)
+<<<<<<< HEAD
 # trainRGB, C, C1 = kMeansClustering(10, trainRGB)
+=======
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 for i in range(len(trainRGB)):
     for j in range(len(trainRGB[0])):
         trainRGBsingle[i][j] = convertRGB(trainRGB[i][j][0], trainRGB[i][j][1], trainRGB[i][j][2])
@@ -303,7 +312,10 @@ temp = []
 tempIndex = dict()
 temp1 = []
 temp1Index = dict()
+<<<<<<< HEAD
 # trainAvgGray, Co, C2 = kMeansClusteringBlack(10, trainGray)
+=======
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 for i in range(len(trainAvgGray)):
     for j in range(len(trainAvgGray[0])):
         temp.append(trainAvgGray[i][j])
@@ -351,9 +363,13 @@ for i in range(len(temp5)):
     y = z[1]
     ans[x][y] = convertToRGB(int(temp5[i]))
 print(ans)
+<<<<<<< HEAD
 print(loss(ans, testRGB))
 saveImageFromArray(ans, 1, "pls.png")
 ans2 = np.concatenate((trainRGB, ans), axis=1)
+=======
+saveImageFromArray(ans, 1, "pls.png")
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 # for i in range(len(temp5)):
 #     print(temp4[i])
 # print(temp4Index[i])

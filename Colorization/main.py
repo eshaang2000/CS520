@@ -185,7 +185,11 @@ def loss(ans, test):
             d += (ans[i][j][0] - test[i][j][0]) ** 2 + (ans[i][j][1] - test[i][j][1]) ** 2 + (
                     ans[i][j][2] - test[i][j][2]) ** 2
     d = math.sqrt(d)
+<<<<<<< HEAD
     return d / len(ans) / len(ans[0])
+=======
+    return d / i / j
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 
 
 # k = 20
@@ -241,12 +245,20 @@ def kMeansClustering(k, data):
             image1[j[0]][j[1]] = C[l]
         l += 1
     return image1, C, C1
+<<<<<<< HEAD
 #
+=======
+
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 
 def kMeansClusteringBlack(k, data):
     C = getKCentroidsBlack(k)
     iter = 0
+<<<<<<< HEAD
     while iter != 40:
+=======
+    while iter != 20:
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
         print("starting iter no " + str(iter))
         C1 = []
         for i in range(k):
@@ -348,9 +360,14 @@ for i in range(len(trainAvgGray)):
 
 
 # the machine learning model is ready
+<<<<<<< HEAD
 print("Training kd trees")
 temp1 = np.asarray(temp)
 nn = NearestNeighbors(5, algorithm='kd_tree')
+=======
+temp1 = np.asarray(temp)
+nn = NearestNeighbors(6, algorithm='kd_tree')
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
 k = nn.fit(temp1)
 
 ans = np.zeros((len(testGray), len(testGray[0]), 3))
@@ -358,8 +375,12 @@ for i in range(len(testGray)):
     for j in range(len(testGray[0])):
         test = np.asarray(testGray[i][j])
         print(test)
+<<<<<<< HEAD
         values, indexs = nn.kneighbors(test.reshape(1, -1), 5)
         print(values)
+=======
+        values, indexs = nn.kneighbors(test.reshape(1, -1), 6)
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
         indexes = []
         for k in indexs[0]:
             indexes.append(tempIndex[k])
@@ -369,6 +390,62 @@ for i in range(len(testGray)):
 
 print(ans)
 print(loss(ans, testRGB))
+<<<<<<< HEAD
 ans2 = np.concatenate((ima, ans), axis=1)
 saveImageFromArray(ans, 1, "ans.png")
 saveImageFromArray(ans2, 1, "ans2.png")
+=======
+saveImageFromArray(ans, 1, "ans.png")
+
+# test = np.array([234, 255])  # so this is just a dummy holder to get the image place
+# # indexs is what we need
+# # Now we can find the indexes necessary to find to do the assignment
+
+"""
+1. get the indexes
+2. get the colors that were put on there
+3. find the majority representation
+4. put it on there"""
+
+# print(trainAvgGray)
+# df = pd.DataFrame(trainAvgGray)
+# print(df)
+# print(trainAvgGray)
+# ima = getArray(i)
+# ima, C, C1 = kMeansClusteringBlack(20, trainGray)
+# print(ima)
+# print(ima.shape)
+# ima2 = np.zeros((660, 495))
+# ima2.astype(np.uint8)
+# for i in range(len(ima)):
+#     for j in range(len(ima[0])):
+#         ima2[i][j] = ima[i][j][0]
+# print(ima2)
+# print(ima2.shape)
+# arr = np.random.randint(0,256, 100*100)
+# arr.resize((100,100))
+# arr.astype(np.uint8)
+# ima2 = trainGray
+# saveImageFromArray(trainRGB, 1)
+# da = Image.fromarray(ima.astype(np.uint8), mode='LA')
+# da.save("pls.png")
+
+
+# print("here")
+# print(nn.kneighbors(test.reshape(1, -1), 5))
+# print("now here")
+# imag, C, C1 = kMeansClustering(10, trainRGB)
+
+# for i in [291183, 185444, 261385, 313990, 204820]:
+#     print(temp1[i])
+# # trainG = np.zeros((len(trainGray), len(trainGray[0]), 1))
+# for i in range(len(trainGray)):
+#     for j in range(len(trainGray[0])):
+#         trainG[i][j] = g[i][j][0]
+
+
+# df = pd.DataFrame(g.reshape(len(g), len(g[0])))
+# df = pd.DataFrame(g.reshape(2, 2))
+## save to xlsx file
+# [[291183, 185444, 261385, 313990, 204820]]
+>>>>>>> 841bded963d9761daccc3b1bd90df8b0023984f0
